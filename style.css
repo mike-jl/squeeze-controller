@@ -3,6 +3,7 @@
 body {
   padding:10px;
   padding-bottom:30px;
+  overflow-x: hidden
 }
 
 .navbar-nav > li > a {padding-top:5px !important; padding-bottom:5px !important;}
