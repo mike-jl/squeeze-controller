@@ -7,8 +7,12 @@
     <label for="lmsport">LMS Port:</label>
     <input ng-model="lmsport" type="text" class="form-control" id="lmsport">
   </div>
-  <button ng-mousedown="saveSettings({lmsurl:lmsurl,lmsport:lmsport})" type="button" class="btn btn-success">
+  <button ng-mousedown="saveSettings({lmsurl:lmsurl,lmsport:lmsport})" type="button" class="btn btn-success pull-right">
     <span class="glyphicon glyphicon-floppy-disk"></span>
     Save
+  </button><br><br>
+  <button ng-mousedown="clearSettings();" type="button" class="btn btn-danger pull-right">
+    <span class="glyphicon glyphicon-trash"></span>
+    Clear Local Storage
   </button>
 </div>

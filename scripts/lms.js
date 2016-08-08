@@ -56,10 +56,15 @@ LmsApi.controller('LmsApiCtrl', function($scope, $http, $timeout, $log, localSto
           $scope.trackpos = 0
         };
       };
-      if (setPlayer.name != $scope.player.name) {
+      if (setPlayer) {
+        if (setPlayer.name != $scope.player.name) {
+          localStorageService.set('player',$scope.player);
+          setPlayer = $scope.player;
+        };
+      } else {
         localStorageService.set('player',$scope.player);
         setPlayer = $scope.player;
-      };
+      }
       $timeout(poller, 500);
     });
   };
@@ -135,6 +140,9 @@ LmsApi.controller('SettingsCtrl', function($scope, $log, localStorageService){
       var value=settings[keyName];
       localStorageService.set(key, value);
     }
+  }
+  $scope.clearSettings = function() {
+    localStorageService.clearAll();
   }
 });
 
