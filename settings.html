@@ -1,0 +1,14 @@
+<div ng-controller="SettingsCtrl">
+  <div class="form-group">
+    <label for="lmsurl">LMS URL:</label>
+    <input ng-model="lmsurl" type="text" class="form-control" id="lmsurl">
+  </div>
+  <div class="form-group">
+    <label for="lmsport">LMS Port:</label>
+    <input ng-model="lmsport" type="text" class="form-control" id="lmsport">
+  </div>
+  <button ng-mousedown="saveSettings({lmsurl:lmsurl,lmsport:lmsport})" type="button" class="btn btn-success">
+    <span class="glyphicon glyphicon-floppy-disk"></span>
+    Save
+  </button>
+</div>

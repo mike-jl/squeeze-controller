@@ -1,0 +1,68 @@
+body {
+  padding:10px;
+  padding-bottom:30px;
+}
+
+.navbar-nav > li > a {padding-top:5px !important; padding-bottom:5px !important;}
+.navbar {min-height:32px !important}
+
+.table tbody>tr>td.vert-align{
+  vertical-align: middle;
+}
+
+.pre-whitespace{
+  white-space:pre;
+  overflow:hidden !important;
+  text-overflow:ellipsis;
+}
+
+.td-content{
+  width: 85%;
+}
+.first-line-bold::first-line {
+  font-weight:bold;
+}
+
+.table {
+  table-layout:fixed;
+}
+
+.glyphicon.gi-v-centered {
+  position: inherit;
+  vertical-align: middle;
+}
+
+.gi-2x{font-size: 2em;}
+.gi-3x{font-size: 3em;}
+.gi-4x{font-size: 4em;}
+.gi-5x{font-size: 5em;}
+
+.img-center {margin:0 auto;}
+.top-buffer {margin-top:20px;}
+
+input[type=range] {
+    /*removes default webkit styles*/
+    -webkit-appearance: none;
+}
+input[type=range]::-webkit-slider-runnable-track {
+    width: auto;
+    height: 6px;
+    background: #ddd;
+    border: none;
+    border-radius: 3px;
+}
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    border: none;
+    height: 16px;
+    width: 16px;
+    border-radius: 50%;
+    background: lightblue;
+    margin-top: -4px;
+}
+input[type=range]:focus {
+    outline: none;
+}
+input[type=range]:focus::-webkit-slider-thumb {
+
+}
