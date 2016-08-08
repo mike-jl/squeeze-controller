@@ -14,11 +14,11 @@
         {{data.playlist_loop[data.playlist_cur_index].album}} ({{data.playlist_loop[data.playlist_cur_index].year}})
       </p>
       <p style="margin-top:25px;margin-bottom:25px;" align="center">
-        <span style="margin-left:35px;margin-right:35px;font-size:2em;" class="glyphicon glyphicon-step-backward" ng-mousedown="params.push('button','jump_rew');lmsPost();"></span>
-        <span style="margin-left:35px;margin-right:35px;font-size:2em;" ng-class="data.mode != 'play' ? 'glyphicon glyphicon-play' : 'glyphicon glyphicon-pause';" ng-mousedown="params.push('pause');lmsPost();"></span>
-        <span style="margin-left:35px;margin-right:35px;font-size:2em;" class="glyphicon glyphicon-step-forward" ng-mousedown="params.push('button','jump_fwd');lmsPost();"></span>
+        <span style="margin-left:35px;margin-right:35px;font-size:2em;" class="glyphicon glyphicon-step-backward clickable" ng-mousedown="params.push('button','jump_rew');lmsPost();"></span>
+        <span style="margin-left:35px;margin-right:35px;font-size:2em;" ng-class="data.mode != 'play' ? 'glyphicon glyphicon-play clickable' : 'glyphicon glyphicon-pause clickable';" ng-mousedown="params.push('pause');lmsPost();"></span>
+        <span style="margin-left:35px;margin-right:35px;font-size:2em;" class="glyphicon glyphicon-step-forward clickable" ng-mousedown="params.push('button','jump_fwd');lmsPost();"></span>
       </p>
-      <input style="margin-bottom:10px;margin-top:0px;" type="range" min="0" max="{{data.duration}}" ng-model="trackpos" ng-mousedown="TrackPosChange=1;" ng-mouseup="params.push('time',trackpos);lmsPost();TrackPosChange=0;">
+      <input style="margin-bottom:10px;margin-top:0px;" class="clickable" type="range" min="0" max="{{data.duration}}" ng-model="trackpos" ng-mousedown="TrackPosChange=1;" ng-mouseup="params.push('time',trackpos);lmsPost();TrackPosChange=0;">
       <p style="text-align:left;">
         {{trackpos | number:0 | secondsToDateTime | date:'HH:mm:ss'}}
         <span ng-if="data.duration" style="float:right;">{{data.duration | number:0 | secondsToDateTime | date:'HH:mm:ss'}}</span>
@@ -26,9 +26,9 @@
       </p>
     </div>
     <div class="col-sm-3">
-      <select class="form-control" ng-model="player" ng-options="player.name for player in players.players_loop"></select>
+      <select class="form-control clickable" ng-model="player" ng-options="player.name for player in players.players_loop"></select>
       <p style="margin-bottom:5px;margin-top:10px;">Volume: {{volume}}</p>
-      <input style="margin-bottom:10px;margin-top:0px;" type="range" min="0" max="100" ng-model="volume" ng-mousedown="VolChange=1;" ng-mouseup="params.push('mixer','volume',volume);lmsPost();VolChange=0;">
+      <input style="margin-bottom:10px;margin-top:0px;" class="clickable" type="range" min="0" max="100" ng-model="volume" ng-mousedown="VolChange=1;" ng-mouseup="params.push('mixer','volume',volume);lmsPost();VolChange=0;">
     </div>
   </div>
   <div class="row top-buffer">
@@ -36,14 +36,14 @@
       <table class="table table-hover table-condensed">
         <thead>
           <tr>
-            <th class="td-content" ng-mousedown="getmenu()">
+            <th class="td-content clickable" ng-mousedown="getmenu()">
               <b>Home</b>
             </th>
           </tr>
         </thead>
         <tdbody>
           <tr ng-if="menu" ng-repeat="menuitem in menu.item_loop | menu_filter:'node':nodefilter:filterisEnable">
-            <td class="pre-whitespace first-line-bold" ng-mousedown="menufunc(menuitem)">{{menuitem.text}}</td>
+            <td class="pre-whitespace first-line-bold clickable" ng-mousedown="menufunc(menuitem)">{{menuitem.text}}</td>
             <td ng-if="menuitem.type=='playlist' && menuitem.commonParams.album_id" class="text-right text-nowrap vert-align">
               <div class="btn-group" uib-dropdown>
                 <button class="btn btn-xs" type="button" uib-dropdown-toggle id="{{menuitem.commonParams.album_id}}">
@@ -151,7 +151,7 @@
         </thead>
         <tbody>
           <tr ng-if="data.playlist_tracks!=0" ng-repeat="title in data.playlist_loop" ng-class="title['playlist index'] == data.playlist_cur_index ? 'active' : '';"  style="font-size:0.9em;">
-            <td class="td-content" ng-mousedown="params.push('playlist','index',title['playlist index']);lmsPost();">
+            <td class="td-content clickable" ng-mousedown="params.push('playlist','index',title['playlist index']);lmsPost();">
               <b>{{title.title}}</b><br>
               {{title.artist}}<br>
               {{title.album}}
