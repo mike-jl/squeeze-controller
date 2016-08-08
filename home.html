@@ -50,9 +50,15 @@
                   <span class="glyphicon glyphicon-option-horizontal gi-v-centered"></span>
                 </button>
                 <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="{{menuitem.commonParams.album_id}}">
-                  <li role="menuitem" ng-mousedown="params.push('playlistcontrol','cmd:load','album_id:' + menuitem.commonParams.album_id);lmsPost();"><a href="#/"><span class="glyphicon glyphicon-play"> Play Now</a></li>
-                  <li role="menuitem" ng-mousedown="params.push('playlistcontrol','cmd:insert','album_id:' + menuitem.commonParams.album_id);lmsPost();"><a href="#/"><span class="glyphicon glyphicon-play"> Play Next</a></li>
-                  <li role="menuitem" ng-mousedown="params.push('playlistcontrol','cmd:add','album_id:' + menuitem.commonParams.album_id);lmsPost();"><a href="#/"><span class="glyphicon glyphicon-plus"> Add to End</a></li>
+                  <li role="menuitem" ng-mousedown="params.push('playlistcontrol','cmd:load','album_id:' + menuitem.commonParams.album_id);lmsPost();">
+                    <a href="#/"><span class="glyphicon glyphicon-play"></span> Play Now</a>
+                  </li>
+                  <li role="menuitem" ng-mousedown="params.push('playlistcontrol','cmd:insert','album_id:' + menuitem.commonParams.album_id);lmsPost();">
+                    <a href="#/"><span class="glyphicon glyphicon-play"></span> Play Next</a>
+                  </li>
+                  <li role="menuitem" ng-mousedown="params.push('playlistcontrol','cmd:add','album_id:' + menuitem.commonParams.album_id);lmsPost();">
+                    <a href="#/"><span class="glyphicon glyphicon-plus"></span> Add to End</a>
+                  </li>
                 </ul>
               </div>
             </td>
@@ -62,9 +68,15 @@
                   <span class="glyphicon glyphicon-option-horizontal gi-v-centered"></span>
                 </button>
                 <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="{{menuitem.commonParams.artist_id}}">
-                  <li role="menuitem" ng-mousedown="params.push('playlistcontrol','cmd:load','artist_id:' + menuitem.commonParams.artist_id);lmsPost();"><a href="#/"><span class="glyphicon glyphicon-play"> Play Now</a></li>
-                  <li role="menuitem" ng-mousedown="params.push('playlistcontrol','cmd:insert','artist_id:' + menuitem.commonParams.artist_id);lmsPost();"><a href="#/"><span class="glyphicon glyphicon-play"> Play Next</a></li>
-                  <li role="menuitem" ng-mousedown="params.push('playlistcontrol','cmd:add','artist_id:' + menuitem.commonParams.artist_id);lmsPost();"><a href="#/"><span class="glyphicon glyphicon-plus"> Add to End</a></li>
+                  <li role="menuitem" ng-mousedown="params.push('playlistcontrol','cmd:load','artist_id:' + menuitem.commonParams.artist_id);lmsPost();">
+                    <a href="#/"><span class="glyphicon glyphicon-play"></span> Play Now</a>
+                  </li>
+                  <li role="menuitem" ng-mousedown="params.push('playlistcontrol','cmd:insert','artist_id:' + menuitem.commonParams.artist_id);lmsPost();">
+                    <a href="#/"><span class="glyphicon glyphicon-play"></span> Play Next</a>
+                  </li>
+                  <li role="menuitem" ng-mousedown="params.push('playlistcontrol','cmd:add','artist_id:' + menuitem.commonParams.artist_id);lmsPost();">
+                    <a href="#/"><span class="glyphicon glyphicon-plus"></span> Add to End</a>
+                  </li>
                 </ul>
               </div>
             </td>
@@ -74,9 +86,15 @@
                   <span class="glyphicon glyphicon-option-horizontal gi-v-centered"></span>
                 </button>
                 <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="{{menuitem.commonParams.playlist_id}}">
-                  <li role="menuitem" ng-mousedown="params.push('playlistcontrol','cmd:load','playlist_id:' + menuitem.commonParams.playlist_id);lmsPost();"><a href="#/"><span class="glyphicon glyphicon-play"> Play Now</a></li>
-                  <li role="menuitem" ng-mousedown="params.push('playlistcontrol','cmd:insert','playlist_id:' + menuitem.commonParams.playlist_id);lmsPost();"><a href="#/"><span class="glyphicon glyphicon-play"> Play Next</a></li>
-                  <li role="menuitem" ng-mousedown="params.push('playlistcontrol','cmd:add','playlist_id:' + menuitem.commonParams.playlist_id);lmsPost();"><a href="#/"><span class="glyphicon glyphicon-plus"> Add to End</a></li>
+                  <li role="menuitem" ng-mousedown="params.push('playlistcontrol','cmd:load','playlist_id:' + menuitem.commonParams.playlist_id);lmsPost();">
+                    <a href="#/"><span class="glyphicon glyphicon-play"></span> Play Now</a>
+                  </li>
+                  <li role="menuitem" ng-mousedown="params.push('playlistcontrol','cmd:insert','playlist_id:' + menuitem.commonParams.playlist_id);lmsPost();">
+                    <a href="#/"><span class="glyphicon glyphicon-play"></span> Play Next</a>
+                  </li>
+                  <li role="menuitem" ng-mousedown="params.push('playlistcontrol','cmd:add','playlist_id:' + menuitem.commonParams.playlist_id);lmsPost();">
+                    <a href="#/"><span class="glyphicon glyphicon-plus"></span> Add to End</a>
+                  </li>
                 </ul>
               </div>
             </td>
@@ -86,9 +104,15 @@
                   <span class="glyphicon glyphicon-option-horizontal gi-v-centered"></span>
                 </button>
                 <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="{{menuitem.commonParams.track_id}}">
-                  <li role="menuitem" ng-mousedown="params.push('playlistcontrol','cmd:load','track_id:' + menuitem.commonParams.track_id);lmsPost();"><a href="#/"><span class="glyphicon glyphicon-play"> Play Now</a></li>
-                  <li role="menuitem" ng-mousedown="params.push('playlistcontrol','cmd:insert','track_id:' + menuitem.commonParams.track_id);lmsPost();"><a href="#/"><span class="glyphicon glyphicon-play"> Play Next</a></li>
-                  <li role="menuitem" ng-mousedown="params.push('playlistcontrol','cmd:add','track_id:' + menuitem.commonParams.track_id);lmsPost();"><a href="#/"><span class="glyphicon glyphicon-plus"> Add to End</a></li>
+                  <li role="menuitem" ng-mousedown="params.push('playlistcontrol','cmd:load','track_id:' + menuitem.commonParams.track_id);lmsPost();">
+                    <a href="#/"><span class="glyphicon glyphicon-play"></span> Play Now</a>
+                  </li>
+                  <li role="menuitem" ng-mousedown="params.push('playlistcontrol','cmd:insert','track_id:' + menuitem.commonParams.track_id);lmsPost();">
+                    <a href="#/"><span class="glyphicon glyphicon-play"></span> Play Next</a>
+                  </li>
+                  <li role="menuitem" ng-mousedown="params.push('playlistcontrol','cmd:add','track_id:' + menuitem.commonParams.track_id);lmsPost();">
+                    <a href="#/"><span class="glyphicon glyphicon-plus"></span> Add to End</a>
+                  </li>
                 </ul>
               </div>
             </td>
@@ -98,9 +122,15 @@
                   <span class="glyphicon glyphicon-option-horizontal gi-v-centered"></span>
                 </button>
                 <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="{{menuitem.params.item_id}}">
-                  <li role="menuitem" ng-mousedown="params.push('local','playlist','play','item_id:' + menuitem.params.item_id);lmsPost();"><a href="#/"><span class="glyphicon glyphicon-play"> Play Now</a></li>
-                  <li role="menuitem" ng-mousedown="params.push('local','playlist','insert','item_id:' + menuitem.params.item_id);lmsPost();"><a href="#/"><span class="glyphicon glyphicon-play"> Play Next</a></li>
-                  <li role="menuitem" ng-mousedown="params.push('local','playlist','add','item_id:' + menuitem.params.item_id);lmsPost();"><a href="#/"><span class="glyphicon glyphicon-plus"> Add to End</a></li>
+                  <li role="menuitem" ng-mousedown="params.push('local','playlist','play','item_id:' + menuitem.params.item_id);lmsPost();">
+                    <a href="#/"><span class="glyphicon glyphicon-play"></span> Play Now</a>
+                  </li>
+                  <li role="menuitem" ng-mousedown="params.push('local','playlist','insert','item_id:' + menuitem.params.item_id);lmsPost();">
+                    <a href="#/"><span class="glyphicon glyphicon-play"></span> Play Next</a>
+                  </li>
+                  <li role="menuitem" ng-mousedown="params.push('local','playlist','add','item_id:' + menuitem.params.item_id);lmsPost();">
+                    <a href="#/"><span class="glyphicon glyphicon-plus"></span> Add to End</a>
+                  </li>
                 </ul>
               </div>
             </td>
