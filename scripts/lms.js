@@ -15,10 +15,18 @@ LmsApi.controller('LmsApiCtrl', function($scope, $http, $timeout, $log, localSto
   $scope.TrackPosChange = 0;
   $scope.VolChange = 0;
   $scope.LmsUrl = 'http://' + localStorageService.get('lmsurl') + ':' + localStorageService.get('lmsport') + '/';
-  console.log($scope.LmsUrl);
+  var setPlayer = localStorageService.get('player');
   $http.post($scope.LmsUrl + "jsonrpc.js",'{"id":1,"method":"slim.request","params":["-",["players",0,99]]}').then(function(r) {
     $scope.players = r.data.result;
-    $scope.player = $scope.players.players_loop[0];
+    if (setPlayer) {
+      if (setPlayer.name == $scope.players.players_loop[setPlayer.playerindex].name) {
+        $scope.player = $scope.players.players_loop[setPlayer.playerindex]
+      } else {
+      $scope.player = $scope.players.players_loop[0];
+      };
+    } else {
+      $scope.player = $scope.players.players_loop[0];
+    }
     poller();
     $scope.getmenu();
   });
@@ -37,7 +45,7 @@ LmsApi.controller('LmsApiCtrl', function($scope, $http, $timeout, $log, localSto
         $scope.CoverUrl = $scope.LmsUrl + "music/" + $scope.data.playlist_loop[$scope.data.playlist_cur_index].id + "/cover_300x300_p.png";
       } else {
         $scope.CoverUrl = $scope.LmsUrl + "music/" + 0 + "/cover_300x300_p.png";
-      }
+      };
       if ($scope.VolChange == 0) {
         $scope.volume = $scope.data['mixer volume']
       };
@@ -47,6 +55,10 @@ LmsApi.controller('LmsApiCtrl', function($scope, $http, $timeout, $log, localSto
         } else {
           $scope.trackpos = 0
         };
+      };
+      if (setPlayer.name != $scope.player.name) {
+        localStorageService.set('player',$scope.player);
+        setPlayer = $scope.player;
       };
       $timeout(poller, 500);
     });
