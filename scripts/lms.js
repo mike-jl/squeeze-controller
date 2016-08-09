@@ -39,10 +39,18 @@ LmsApi.controller('LmsApiCtrl', function($scope, $http, $timeout, $log, localSto
     });
   };
   var poller = function() {
-    $http.post($scope.LmsUrl + "jsonrpc.js", '{"id":1,"method":"slim.request","params":["' + $scope.player.playerid + '", ["status", "0", 999, "tags:aly"]]}').then(function(r) {
+    $http.post($scope.LmsUrl + "jsonrpc.js", '{"id":1,"method":"slim.request","params":["' + $scope.player.playerid + '", ["status", "0", 999, "tags:alyK"]]}').then(function(r) {
       $scope.data = r.data.result;
       if ($scope.data.playlist_tracks!=0) {
+        if ($scope.data.playlist_loop[$scope.data.playlist_cur_index].artwork_url) {
+          if ($scope.data.playlist_loop[$scope.data.playlist_cur_index].artwork_url.startsWith('http')) {
+            $scope.CoverUrl = $scope.data.playlist_loop[$scope.data.playlist_cur_index].artwork_url;
+          } else {
+            $scope.CoverUrl = $scope.LmsUrl + $scope.data.playlist_loop[$scope.data.playlist_cur_index].artwork_url;
+          }
+        } else {
         $scope.CoverUrl = $scope.LmsUrl + "music/" + $scope.data.playlist_loop[$scope.data.playlist_cur_index].id + "/cover_300x300_p.png";
+        };
       } else {
         $scope.CoverUrl = $scope.LmsUrl + "music/" + 0 + "/cover_300x300_p.png";
       };
