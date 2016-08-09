@@ -19,7 +19,7 @@ LmsApi.controller('LmsApiCtrl', function($scope, $http, $timeout, $log, localSto
   $http.post($scope.LmsUrl + "jsonrpc.js",'{"id":1,"method":"slim.request","params":["-",["players",0,99]]}').then(function(r) {
     $scope.players = r.data.result;
     if (setPlayer) {
-      if (setPlayer.name == $scope.players.players_loop[setPlayer.playerindex].name) {
+      if (setPlayer.playerid == $scope.players.players_loop[setPlayer.playerindex].playerid) {
         $scope.player = $scope.players.players_loop[setPlayer.playerindex]
       } else {
       $scope.player = $scope.players.players_loop[0];
@@ -57,7 +57,7 @@ LmsApi.controller('LmsApiCtrl', function($scope, $http, $timeout, $log, localSto
         };
       };
       if (setPlayer) {
-        if (setPlayer.name != $scope.player.name) {
+        if (setPlayer.playerid != $scope.player.playerid) {
           localStorageService.set('player',$scope.player);
           setPlayer = $scope.player;
         };
