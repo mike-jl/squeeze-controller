@@ -1,5 +1,5 @@
 'use strict';
-var LmsApi = angular.module('LmsApi', ['ngAnimate','ui.bootstrap','LocalStorageModule', 'ngRoute'])
+var LmsApi = angular.module('LmsApi', ['ngAnimate','ui.bootstrap','LocalStorageModule', 'ngRoute',  'cfp.hotkeys'])
 
 LmsApi.config(function($routeProvider) {
   $routeProvider
@@ -8,7 +8,7 @@ LmsApi.config(function($routeProvider) {
     .otherwise({ redirectTo: '/' });
 })
 
-LmsApi.controller('LmsApiCtrl', function($scope, $http, $timeout, $log, localStorageService){
+LmsApi.controller('LmsApiCtrl', function($scope, $http, $timeout, $log, localStorageService, hotkeys){
   $scope.home = 1;
   $scope.settings = 0;
   $scope.params = [];
@@ -138,6 +138,55 @@ LmsApi.controller('LmsApiCtrl', function($scope, $http, $timeout, $log, localSto
       };
     };
   };
+
+  window.addEventListener("keydown", function(e) {
+    // space and arrow keys
+    if([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
+        e.preventDefault();
+    }
+  }, false);
+
+  hotkeys.bindTo($scope)
+    .add({
+      combo: 'space',
+      description: 'Play/Pause',
+      callback: function() {
+        $scope.params.push('pause');
+        $scope.lmsPost()
+      }
+    })
+    .add({
+      combo: 'left',
+      description: 'Previous Track',
+      callback: function() {
+        $scope.params.push('button','jump_rew');
+        $scope.lmsPost()
+      }
+    })
+    .add({
+      combo: 'right',
+      description: 'Next Track',
+      callback: function() {
+        $scope.params.push('button','jump_fwd');
+        $scope.lmsPost()
+      }
+    })
+    .add({
+      combo: 'up',
+      description: 'Volume Up',
+      callback: function() {
+        $scope.params.push('mixer','volume','+2');
+        $scope.lmsPost()
+      }
+    })
+    .add({
+      combo: 'down',
+      description: 'Volume Down',
+      callback: function() {
+        $scope.params.push('mixer','volume','-2');
+        $scope.lmsPost()
+      }
+    })
 });
 
 LmsApi.controller('SettingsCtrl', function($scope, $log, localStorageService){
