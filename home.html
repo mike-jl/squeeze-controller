@@ -42,7 +42,7 @@
           </tr>
         </thead>
         <tdbody>
-          <tr ng-if="menu" ng-repeat="menuitem in menu.item_loop | menu_filter:'node':nodefilter:filterisEnable">
+          <tr ng-if="menu" ng-repeat="menuitem in menu.item_loop | menu_filter:'node':nodefilter:filterisEnable | orderBy:['weight','text']">
             <td class="pre-whitespace first-line-bold clickable" ng-mousedown="menufunc(menuitem)">{{menuitem.text}}</td>
             <td ng-if="menuitem.type=='playlist' && menuitem.commonParams.album_id" class="text-right text-nowrap vert-align">
               <div class="btn-group" uib-dropdown>
