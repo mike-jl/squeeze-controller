@@ -134,6 +134,24 @@
                 </ul>
               </div>
             </td>
+            <td ng-if="menuitem.type=='playlist' && menuitem.params.item_id" class="text-right text-nowrap vert-align">
+              <div class="btn-group" uib-dropdown>
+                <button class="btn btn-xs" type="button" uib-dropdown-toggle id="{{menuitem.params.item_id}}">
+                  <span class="glyphicon glyphicon-option-horizontal gi-v-centered"></span>
+                </button>
+                <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="{{menuitem.params.item_id}}">
+                  <li role="menuitem" ng-mousedown="params.push('favorites','playlist','play','item_id:' + menuitem.params.item_id);lmsPost();">
+                    <a href="#/"><span class="glyphicon glyphicon-play"></span> Play Now</a>
+                  </li>
+                  <li role="menuitem" ng-mousedown="params.push('favorites','playlist','insert','item_id:' + menuitem.params.item_id);lmsPost();">
+                    <a href="#/"><span class="glyphicon glyphicon-play"></span> Play Next</a>
+                  </li>
+                  <li role="menuitem" ng-mousedown="params.push('favorites','playlist','add','item_id:' + menuitem.params.item_id);lmsPost();">
+                    <a href="#/"><span class="glyphicon glyphicon-plus"></span> Add to End</a>
+                  </li>
+                </ul>
+              </div>
+            </td>
           </tr>
         </tdbody>
       </table>

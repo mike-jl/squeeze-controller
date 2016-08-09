@@ -103,32 +103,41 @@ LmsApi.controller('LmsApiCtrl', function($scope, $http, $timeout, $log, localSto
       if (item.isANode) {
         $scope.nodefilter = item.id;
       } else if (item.type == "playlist") {
-        console.log("playlist");
-        if (item.commonParams.album_id) {
-          console.log("album");
-          $scope.params.push('browselibrary','items',0,100,'mode:tracks','menu:1','album_id:' + item.commonParams.album_id);
-          $scope.lmsPost().then(function(r) {
-            $scope.menu=r;
-            $scope.filterisEnable=false;
-          })
-        } else if (item.commonParams.artist_id) {
-          console.log("artist");
-          $scope.params.push('browselibrary','items',0,100,'mode:albums','menu:1','artist_id:' + item.commonParams.artist_id);
-          $scope.lmsPost().then(function(r) {
-            $scope.menu=r;
-            $scope.filterisEnable=false;
-          })
-        } else if (item.commonParams.playlist_id) {
+        if (item.commonParams) {
           console.log("playlist");
-          $scope.params.push('browselibrary','items',0,100,'mode:tracks','menu:1','playlist_id:' + item.commonParams.playlist_id);
+          if (item.commonParams.album_id) {
+            console.log("album");
+            $scope.params.push('browselibrary','items',0,100,'mode:tracks','menu:1','album_id:' + item.commonParams.album_id);
+            $scope.lmsPost().then(function(r) {
+              $scope.menu=r;
+              $scope.filterisEnable=false;
+            })
+          } else if (item.commonParams.artist_id) {
+            console.log("artist");
+            $scope.params.push('browselibrary','items',0,100,'mode:albums','menu:1','artist_id:' + item.commonParams.artist_id);
+            $scope.lmsPost().then(function(r) {
+              $scope.menu=r;
+              $scope.filterisEnable=false;
+            })
+          } else if (item.commonParams.playlist_id) {
+            console.log("playlist");
+            $scope.params.push('browselibrary','items',0,100,'mode:tracks','menu:1','playlist_id:' + item.commonParams.playlist_id);
+            $scope.lmsPost().then(function(r) {
+              $scope.menu=r;
+              $scope.filterisEnable=false;
+            })
+          }
+        } else if (item.params) {
+          console.log('playlist,params');
+          $scope.params.push('favorites','items',0,100,'menu:favorites','item_id:' + item.params.item_id);
           $scope.lmsPost().then(function(r) {
             $scope.menu=r;
             $scope.filterisEnable=false;
           })
-        }
-      }
-    }
-  }
+        };
+      };
+    };
+  };
 });
 
 LmsApi.controller('SettingsCtrl', function($scope, $log, localStorageService){
