@@ -175,7 +175,9 @@
               {{title.album}}
             </td>
             <td class="text-right text-nowrap vert-align">
-              <button class="btn btn-sm btn-warning" ng-mousedown="params.push('playlist','delete',title['playlist index']);lmsPost();"><span class="glyphicon glyphicon-trash gi-v-centered"></span></button>
+              <button class="btn btn-sm btn-warning" ng-mousedown="params.push('playlist','delete',title['playlist index']);lmsPost();">
+                <span class="glyphicon glyphicon-trash gi-v-centered"></span>
+              </button>
             </td>
           </tr>
           <tr ng-if="data.playlist_tracks==0">
