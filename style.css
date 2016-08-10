@@ -1,9 +1,11 @@
-.nav, .pagination, .carousel, .panel-title a { cursor: pointer; }
+.search-form {
+    margin:0px;
+}
 
 body {
   padding:10px;
   padding-bottom:30px;
-  overflow-x: hidden
+  overflow-x: hidden;
 }
 
 .clickable {
@@ -13,14 +15,23 @@ body {
 .navbar-nav > li > a {padding-top:5px !important; padding-bottom:5px !important;}
 .navbar {min-height:32px !important}
 
-.table tbody>tr>td.vert-align{
-  vertical-align: middle;
-}
-
 .pre-whitespace{
   white-space:pre;
+}
+
+.dot-overflow{
   overflow:hidden !important;
   text-overflow:ellipsis;
+}
+
+.menu-float-right{
+  float:right;
+  text-align:right;
+}
+
+.menu-float-left{
+  float:left;
+  text-align:left;
 }
 
 .td-content{

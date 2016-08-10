@@ -8,7 +8,7 @@ LmsApi.config(function($routeProvider) {
     .otherwise({ redirectTo: '/' });
 })
 
-LmsApi.controller('LmsApiCtrl', function($scope, $http, $timeout, $log, localStorageService, hotkeys){
+LmsApi.controller('LmsApiCtrl', function($scope, $http, $timeout, $log, localStorageService, hotkeys, $q){
   $scope.home = 1;
   $scope.settings = 0;
   $scope.params = [];
@@ -36,6 +36,7 @@ LmsApi.controller('LmsApiCtrl', function($scope, $http, $timeout, $log, localSto
       $scope.nodefilter = 'home'
       $scope.menu = r.data.result;
       $scope.filterisEnable = true;
+      $scope.orderby = 'weight'
     });
   };
   var poller = function() {
@@ -77,15 +78,17 @@ LmsApi.controller('LmsApiCtrl', function($scope, $http, $timeout, $log, localSto
     });
   };
   $scope.lmsPost = function() {
-    var httpr = $http.post($scope.LmsUrl + "jsonrpc.js",'{"id":1,"method":"slim.request","params":["' + $scope.player.playerid + '",' + angular.toJson($scope.params) + ']}').then(function(r) {
-      console.log("lmsPost: " + $scope.params);
-      $scope.params.length = 0;
+    var params = $scope.params.slice(0);
+    $scope.params.length = 0;
+    console.log("lmsPost: " + params);
+    return $http.post($scope.LmsUrl + "jsonrpc.js",'{"id":1,"method":"slim.request","params":["' + $scope.player.playerid + '",' + angular.toJson(params) + ']}').then(function(r) {
+      console.log(r.data.result);
       return r.data.result;
     });
-    return httpr;
   }
   $scope.menufunc = function(item) {
     console.log(item);
+    if (item.action == 'none') { return }
     if (item.actions) {
       if (item.actions.do) {
         console.log("do");
@@ -94,62 +97,147 @@ LmsApi.controller('LmsApiCtrl', function($scope, $http, $timeout, $log, localSto
         $scope.getmenu();
       } else if (item.actions.go) {
         console.log("go");
-        Array.prototype.push.apply($scope.params,item.actions.go.cmd);
-        $scope.params.push(0,999999);
-        for(var keyName in item.actions.go.params){
-          var key=keyName;
-          var value=item.actions.go.params[keyName];
+        var menuChange = false;
+        for(var key in item.actions.go.cmd){
+          var value=item.actions.go.cmd[key];
+          $scope.params.push(value);
+          if (value == 'items') {
+            $scope.params.push(0,100)
+            menuChange = true;
+          }
+        }
+        for(var key in item.actions.go.params){
+          var value=item.actions.go.params[key];
+          if (key == 'search') {
+            console.log('this is a search item, use the search input');
+            return;
+          }
           $scope.params.push(key + ":" + value);
         }
+        $scope.params.push('useContextMenu:1')
         $scope.lmsPost().then(function(r) {
-          $scope.menu=r;
-          $scope.filterisEnable=false;
-        })
-      }
-    } else {
-      console.log("anders");
-      if (item.isANode) {
-        $scope.nodefilter = item.id;
-      } else if (item.type == "playlist") {
-        if (item.commonParams) {
-          console.log("playlist");
-          if (item.commonParams.album_id) {
-            console.log("album");
-            $scope.params.push('browselibrary','items',0,100,'mode:tracks','menu:1','album_id:' + item.commonParams.album_id);
-            $scope.lmsPost().then(function(r) {
-              $scope.menu=r;
-              $scope.filterisEnable=false;
-            })
-          } else if (item.commonParams.artist_id) {
-            console.log("artist");
-            $scope.params.push('browselibrary','items',0,100,'mode:albums','menu:1','artist_id:' + item.commonParams.artist_id);
-            $scope.lmsPost().then(function(r) {
-              $scope.menu=r;
-              $scope.filterisEnable=false;
-            })
-          } else if (item.commonParams.playlist_id) {
-            console.log("playlist");
-            $scope.params.push('browselibrary','items',0,100,'mode:tracks','menu:1','playlist_id:' + item.commonParams.playlist_id);
-            $scope.lmsPost().then(function(r) {
-              $scope.menu=r;
-              $scope.filterisEnable=false;
-            })
-          }
-        } else if (item.params) {
-          console.log('playlist,params');
-          $scope.params.push('favorites','items',0,100,'menu:favorites','item_id:' + item.params.item_id);
-          $scope.lmsPost().then(function(r) {
+          if (menuChange) {
+            if (r.base) {
+              $scope.baseactions=r.base.actions;
+            } else {
+              $scope.baseactions=0;
+            }
             $scope.menu=r;
             $scope.filterisEnable=false;
-          })
+            $scope.orderby = '$index';
+          };
+        })
+      }
+    } else if (item.isANode) {
+      $scope.nodefilter = item.id;
+    } else {
+      if (item.goAction) {
+        var action = item.goAction
+      } else {
+        var action = 'go'
+      }
+      console.log('Action:' + action);
+      if ($scope.baseactions==0) {
+        console.log('something went horribly wrong..');
+        return;
+      }
+      var params = $scope.submenu(item,action,0);
+      $scope.params = params[0]
+      var menuChange = params[1]
+      $scope.lmsPost().then(function(r) {
+        if (menuChange) {
+          if (r.base) {
+            $scope.baseactions=r.base.actions;
+          } else {
+            $scope.baseactions=0;
+          }
+          $scope.menu=r;
+          $scope.filterisEnable=false;
+          $scope.orderby = '$index';
         };
-      };
+      })
     };
+  };
+  $scope.ddClose = function() {
+    $scope.contextMenu = {};
+  }
+  $scope.submenu = function(menuitem,action,context) {
+    var menuChange = false;
+    var params=[]
+    for (var key in $scope.baseactions[action].cmd) {
+      var value = $scope.baseactions[action].cmd[key];
+      $scope.params.push(value)
+      if (value == 'items') {
+        $scope.params.push(0,100)
+        menuChange = true;
+      }
+    }
+    for (var key in $scope.baseactions[action].params) {
+      var value = $scope.baseactions[action].params[key];
+      $scope.params.push(key + ":" + value)
+    }
+    for (var key in menuitem[$scope.baseactions[action].itemsParams]) {
+      var value = menuitem[$scope.baseactions[action].itemsParams][key];
+      $scope.params.push(key + ":" + value)
+    }
+    for (var key in $scope.baseactions[action]) {
+      if (key != 'cmd' &&
+          key != 'params' &&
+          key != 'itemsParams') {
+        var value = $scope.baseactions[action][key]
+        if (typeof $scope.baseactions[action][key] != 'object') {
+            $scope.params.push(key + ":" + value)
+        } else {
+          if( Object.prototype.toString.call($scope.baseactions[action][key]) == '[object Array]' ) {
+            for (var subkey in $scope.baseactions[action][key]) {
+              var subvalue = $scope.baseactions[action][key][subkey]
+              $scope.params.push(subvalue)
+            }
+          } else {
+            for (var subkey in $scope.baseactions[action][key]) {
+              var subvalue = $scope.baseactions[action][key][subkey]
+              $scope.params.push(subkey + ":" + subvalue)
+            }
+          }
+        }
+      }
+    }
+    $scope.params.push('useContextMenu:1');
+    if (context == 1) {
+      $scope.params.push('xmlBrowseInterimCM:1');
+      $scope.lmsPost().then(function(r) {
+        $scope.contextMenu = r;
+      })
+    } else {
+      return [params,menuChange]
+    }
+  }
+
+  $scope.search = function(item,searchInput) {
+    for(var key in item.actions.go.cmd){
+      var value=item.actions.go.cmd[key];
+      $scope.params.push(value);
+      if (value == 'items') {
+        $scope.params.push(0,100)
+      }
+    }
+    for(var key in item.actions.go.params){
+      var value=item.actions.go.params[key];
+      if (value=='__TAGGEDINPUT__'){
+        value=searchInput;
+      };
+      $scope.params.push(key + ":" + value);
+    }
+    $scope.params.push('useContextMenu:1');
+    $scope.lmsPost().then(function(r) {
+      $scope.menu=r;
+      $scope.filterisEnable=false;
+    })
   };
 
   window.addEventListener("keydown", function(e) {
     // space and arrow keys
-    if([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
+    if([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1 && e.target == document.body) {
         e.preventDefault();
     }
   }, false);

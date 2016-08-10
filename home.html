@@ -36,120 +36,39 @@
       <table class="table table-hover table-condensed">
         <thead>
           <tr>
-            <th class="td-content clickable" ng-mousedown="getmenu()">
+            <th class="clickable" ng-mousedown="getmenu()">
               <b>Home</b>
             </th>
           </tr>
         </thead>
         <tdbody>
-          <tr ng-if="menu" ng-repeat="menuitem in menu.item_loop | menu_filter:'node':nodefilter:filterisEnable | orderBy:['weight','text']">
-            <td class="pre-whitespace first-line-bold clickable" ng-mousedown="menufunc(menuitem)">{{menuitem.text}}</td>
-            <td ng-if="menuitem.type=='playlist' && menuitem.commonParams.album_id" class="text-right text-nowrap vert-align">
-              <div class="btn-group" uib-dropdown>
-                <button class="btn btn-xs" type="button" uib-dropdown-toggle id="{{menuitem.commonParams.album_id}}">
-                  <span class="glyphicon glyphicon-option-horizontal gi-v-centered"></span>
-                </button>
-                <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="{{menuitem.commonParams.album_id}}">
-                  <li role="menuitem" ng-mousedown="params.push('playlistcontrol','cmd:load','album_id:' + menuitem.commonParams.album_id);lmsPost();">
-                    <a href="#/"><span class="glyphicon glyphicon-play"></span> Play Now</a>
-                  </li>
-                  <li role="menuitem" ng-mousedown="params.push('playlistcontrol','cmd:insert','album_id:' + menuitem.commonParams.album_id);lmsPost();">
-                    <a href="#/"><span class="glyphicon glyphicon-play"></span> Play Next</a>
-                  </li>
-                  <li role="menuitem" ng-mousedown="params.push('playlistcontrol','cmd:add','album_id:' + menuitem.commonParams.album_id);lmsPost();">
-                    <a href="#/"><span class="glyphicon glyphicon-plus"></span> Add to End</a>
-                  </li>
-                </ul>
+          <tr ng-if="menu" ng-repeat="menuitem in menu.item_loop | menu_filter:'node':nodefilter:filterisEnable | orderBy:orderby track by $index">
+            <td>
+              <div style='width:{{100-menuContentWidth}}%;' class="pre-whitespace first-line-bold clickable dot-overflow menu-float-left"
+              ng-init="menuContentWidth=0" ng-mousedown="menufunc(menuitem)">{{menuitem.text}}</div>
+              <div style='width:{{$parent.menuContentWidth = 10}}%;' ng-if="menuitem.params.isContextMenu || menuitem.type == 'playlist' || menuitem.type == 'audio'" class="menu-float-right text-nowrap">
+                <div class="btn-group vert-align" uib-dropdown on-toggle="open ? submenu(menuitem,'more',1) : ddClose()">
+                  <button class="btn btn-xs" type="button" uib-dropdown-toggle id="{{menuitem.commonParams.album_id}}">
+                    <span class="glyphicon glyphicon-option-horizontal gi-v-centered"></span>
+                  </button>
+                  <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="{{menuitem.commonParams.album_id}}">
+                    <li ng-repeat="contextItem in contextMenu.item_loop" ng-class="contextItem.action=='none' ? 'disabled' : ''" ng-mousedown="menufunc(contextItem)" role="menuitem">
+                      <a href="#/">{{contextItem.text}}</a>
+                    </li>
+                  </ul>
+                </div>
               </div>
-            </td>
-            <td ng-if="menuitem.type=='playlist' && menuitem.commonParams.artist_id" class="text-right text-nowrap vert-align">
-              <div class="btn-group" uib-dropdown>
-                <button class="btn btn-xs" type="button" uib-dropdown-toggle id="{{menuitem.commonParams.artist_id}}">
-                  <span class="glyphicon glyphicon-option-horizontal gi-v-centered"></span>
-                </button>
-                <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="{{menuitem.commonParams.artist_id}}">
-                  <li role="menuitem" ng-mousedown="params.push('playlistcontrol','cmd:load','artist_id:' + menuitem.commonParams.artist_id);lmsPost();">
-                    <a href="#/"><span class="glyphicon glyphicon-play"></span> Play Now</a>
-                  </li>
-                  <li role="menuitem" ng-mousedown="params.push('playlistcontrol','cmd:insert','artist_id:' + menuitem.commonParams.artist_id);lmsPost();">
-                    <a href="#/"><span class="glyphicon glyphicon-play"></span> Play Next</a>
-                  </li>
-                  <li role="menuitem" ng-mousedown="params.push('playlistcontrol','cmd:add','artist_id:' + menuitem.commonParams.artist_id);lmsPost();">
-                    <a href="#/"><span class="glyphicon glyphicon-plus"></span> Add to End</a>
-                  </li>
-                </ul>
-              </div>
-            </td>
-            <td ng-if="menuitem.type=='playlist' && menuitem.commonParams.playlist_id" class="text-right text-nowrap vert-align">
-              <div class="btn-group" uib-dropdown>
-                <button class="btn btn-xs" type="button" uib-dropdown-toggle id="{{menuitem.commonParams.playlist_id}}">
-                  <span class="glyphicon glyphicon-option-horizontal gi-v-centered"></span>
-                </button>
-                <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="{{menuitem.commonParams.playlist_id}}">
-                  <li role="menuitem" ng-mousedown="params.push('playlistcontrol','cmd:load','playlist_id:' + menuitem.commonParams.playlist_id);lmsPost();">
-                    <a href="#/"><span class="glyphicon glyphicon-play"></span> Play Now</a>
-                  </li>
-                  <li role="menuitem" ng-mousedown="params.push('playlistcontrol','cmd:insert','playlist_id:' + menuitem.commonParams.playlist_id);lmsPost();">
-                    <a href="#/"><span class="glyphicon glyphicon-play"></span> Play Next</a>
-                  </li>
-                  <li role="menuitem" ng-mousedown="params.push('playlistcontrol','cmd:add','playlist_id:' + menuitem.commonParams.playlist_id);lmsPost();">
-                    <a href="#/"><span class="glyphicon glyphicon-plus"></span> Add to End</a>
-                  </li>
-                </ul>
-              </div>
-            </td>
-            <td ng-if="menuitem.type=='audio' && menuitem.commonParams.track_id" class="text-right text-nowrap vert-align">
-              <div class="btn-group" uib-dropdown>
-                <button class="btn btn-xs" type="button" uib-dropdown-toggle id="{{menuitem.commonParams.track_id}}">
-                  <span class="glyphicon glyphicon-option-horizontal gi-v-centered"></span>
-                </button>
-                <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="{{menuitem.commonParams.track_id}}">
-                  <li role="menuitem" ng-mousedown="params.push('playlistcontrol','cmd:load','track_id:' + menuitem.commonParams.track_id);lmsPost();">
-                    <a href="#/"><span class="glyphicon glyphicon-play"></span> Play Now</a>
-                  </li>
-                  <li role="menuitem" ng-mousedown="params.push('playlistcontrol','cmd:insert','track_id:' + menuitem.commonParams.track_id);lmsPost();">
-                    <a href="#/"><span class="glyphicon glyphicon-play"></span> Play Next</a>
-                  </li>
-                  <li role="menuitem" ng-mousedown="params.push('playlistcontrol','cmd:add','track_id:' + menuitem.commonParams.track_id);lmsPost();">
-                    <a href="#/"><span class="glyphicon glyphicon-plus"></span> Add to End</a>
-                  </li>
-                </ul>
-              </div>
-            </td>
-            <td ng-if="menuitem.type=='audio' && menuitem.params.item_id" class="text-right text-nowrap vert-align">
-              <div class="btn-group" uib-dropdown>
-                <button class="btn btn-xs" type="button" uib-dropdown-toggle id="{{menuitem.params.item_id}}">
-                  <span class="glyphicon glyphicon-option-horizontal gi-v-centered"></span>
-                </button>
-                <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="{{menuitem.params.item_id}}">
-                  <li role="menuitem" ng-mousedown="params.push('local','playlist','play','item_id:' + menuitem.params.item_id);lmsPost();">
-                    <a href="#/"><span class="glyphicon glyphicon-play"></span> Play Now</a>
-                  </li>
-                  <li role="menuitem" ng-mousedown="params.push('local','playlist','insert','item_id:' + menuitem.params.item_id);lmsPost();">
-                    <a href="#/"><span class="glyphicon glyphicon-play"></span> Play Next</a>
-                  </li>
-                  <li role="menuitem" ng-mousedown="params.push('local','playlist','add','item_id:' + menuitem.params.item_id);lmsPost();">
-                    <a href="#/"><span class="glyphicon glyphicon-plus"></span> Add to End</a>
-                  </li>
-                </ul>
-              </div>
-            </td>
-            <td ng-if="menuitem.type=='playlist' && menuitem.params.item_id" class="text-right text-nowrap vert-align">
-              <div class="btn-group" uib-dropdown>
-                <button class="btn btn-xs" type="button" uib-dropdown-toggle id="{{menuitem.params.item_id}}">
-                  <span class="glyphicon glyphicon-option-horizontal gi-v-centered"></span>
-                </button>
-                <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="{{menuitem.params.item_id}}">
-                  <li role="menuitem" ng-mousedown="params.push('favorites','playlist','play','item_id:' + menuitem.params.item_id);lmsPost();">
-                    <a href="#/"><span class="glyphicon glyphicon-play"></span> Play Now</a>
-                  </li>
-                  <li role="menuitem" ng-mousedown="params.push('favorites','playlist','insert','item_id:' + menuitem.params.item_id);lmsPost();">
-                    <a href="#/"><span class="glyphicon glyphicon-play"></span> Play Next</a>
-                  </li>
-                  <li role="menuitem" ng-mousedown="params.push('favorites','playlist','add','item_id:' + menuitem.params.item_id);lmsPost();">
-                    <a href="#/"><span class="glyphicon glyphicon-plus"></span> Add to End</a>
-                  </li>
-                </ul>
+              <div style='width:{{$parent.menuContentWidth = 30}}%;' ng-if="menuitem.type=='search' || menuitem.actions.go.params.search" class="menu-float-right text-nowrap">
+                <form class="search-form" ng-submit="search(menuitem,searchInput)">
+                  <div class="input-group input-group-sm">
+                    <input type="text" class="form-control" ng-model="searchInput" placeholder="Search...">
+                    <span class="input-group-btn">
+                      <button class="btn btn-default" type="button submit">
+                        <span class="glyphicon glyphicon-search"></span>
+                      </button>
+                    </span>
+                  </div>
+                </form>
               </div>
             </td>
           </tr>
@@ -174,7 +93,7 @@
               {{title.artist}}<br>
               {{title.album}}
             </td>
-            <td class="text-right text-nowrap vert-align">
+            <td class="text-right text-nowrap">
               <button class="btn btn-sm btn-warning" ng-mousedown="params.push('playlist','delete',title['playlist index']);lmsPost();">
                 <span class="glyphicon glyphicon-trash gi-v-centered"></span>
               </button>
