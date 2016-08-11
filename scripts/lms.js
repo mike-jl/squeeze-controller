@@ -1,5 +1,5 @@
 'use strict';
-var LmsApi = angular.module('LmsApi', ['ngAnimate','ui.bootstrap','LocalStorageModule', 'ngRoute',  'cfp.hotkeys','images-resizer'])
+var LmsApi = angular.module('LmsApi', ['ngAnimate','ui.bootstrap','LocalStorageModule', 'ngRoute', 'cfp.hotkeys'])
 
 LmsApi.config(function($routeProvider) {
   $routeProvider
@@ -8,7 +8,7 @@ LmsApi.config(function($routeProvider) {
     .otherwise({ redirectTo: '/' });
 })
 
-LmsApi.controller('LmsApiCtrl', function($filter, $location, $scope, $http, $timeout, $log, localStorageService, hotkeys, resizeService) {
+LmsApi.controller('LmsApiCtrl', function($filter, $location, $scope, $http, $timeout, $log, localStorageService, hotkeys) {
   $scope.TrackPosChange = 0;
   $scope.VolChange = 0;
   var storagelmsurl = localStorageService.get('lmsurl')
