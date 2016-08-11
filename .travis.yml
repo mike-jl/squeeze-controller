@@ -1,5 +1,5 @@
 language: node_js
-node_js: 4.2.x
+node_js: 4.2.6
 
 install:
 - npm install
