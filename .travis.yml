@@ -1,9 +1,29 @@
 language: node_js
 node_js: 4.2.6
-
 install:
-- npm install
-- npm install electron-packager -g
-
+  - npm install
+  - npm install electron-packager -g
 script:
-- electron-packager . squeeze-controller --platform="linux,win32,darwin" --arch="ia32,x64" --asar
+  - electron-packager . squeeze-controller --platform="linux,win32,darwin" --arch="ia32,x64" --asar
+before_deploy:
+  - tar -czvf squeeze-controller-darwin-x64.tar.gz squeeze-controller-darwin-x64
+  - tar -czvf squeeze-controller-darwin-ia32.tar.gz squeeze-controller-darwin-ia32
+  - tar -czvf squeeze-controller-linux-x64.tar.gz squeeze-controller-linux-x64
+  - tar -czvf squeeze-controller-linux-ia32.tar.gz squeeze-controller-linux-ia32
+  - zip -r squeeze-controller-win32-x64.zip squeeze-controller-win32-x64
+  - zip -r squeeze-controller-win32-ia32.zip squeeze-controller-win32-ia32
+
+deploy:
+  provider: releases
+  api_key:
+    secure: V5Z2CsW7+Hx2aaqG2ZgZt2NNwDCk5MWfWb51KxV16oNZte7GdCCeKKhHmSGYGgXIy8bNOL6zRSO8Vg5CoFwnNK73z1xYiv7aX7adtbn6Epx3FA0e7ODMX6HAGyFRe4XDeeQpSlz2/0IUQLkepyjgAARs6FdBKbfwEFIxnTjUBuRqEbTdqtLW0a2joWj18qdG6dQJ+g63TNXj5MaPZDJ2uVHphiiq+Gqv1EeeCobqkNvvnCBKhpGluwvjF/c5wnecXW/o0bfeBB1FaKOn1cenWpBQn0J/EnzGNmgCOJYIIfpd95qra8PcY5amg6bLxgmORz8a7NhtEzSIC8UXHnp1lSk6P94YIVe3m5QRYvOheLAEmT0uhUV0F3L15Sxi+Nku/4zWBgzifz82Mg7xnwQugnbyiFBavuu2b2wuc9zn/jwfdde96UUUY+19uqkpYqkQaxmiqJB+PqYLL/CcOVVcTu0T3PzZPmXeprG456xs+7w4FSyEz0LfzJQNzQfAqU330K76GU2gX9lTWlu+OEE9P2JY6DiROUJP4mBk5o49zlYhP1DPuJB2/z8H0lUh0DFwMsR3zy4kKQsg0F+GuqdT7xJJWhO0YAtzf/W7Z4C4ZphBZW1rF9EciRabdYauy83hJl2cyL73jS7buPhivv21T/F8Fk67UHqTqY2Pcdvd/HY=
+  file:
+    - "squeeze-controller-darwin-x64.tar.gz"
+    - "squeeze-controller-darwin-ia32.tar.gz"
+    - "squeeze-controller-linux-x64.tar.gz"
+    - "squeeze-controller-linux-ia32.tar.gz"
+    - "squeeze-controller-win32-x64.zip"
+    - "squeeze-controller-win32-ia32.zip"
+  skip_cleanup: true
+  on:
+    tags: true
