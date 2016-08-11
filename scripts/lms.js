@@ -97,15 +97,19 @@ LmsApi.controller('LmsApiCtrl', function($scope, $http, $timeout, $log, localSto
         $scope.getmenu();
       } else if (item.actions.go) {
         console.log("go");
-        var menuChange = false;
+        if (item.actions.go.nextWindow == 'parentNoRefresh' ||
+            item.actions.go.nextWindow == 'nowPlaying') {
+          var menuChange = false;
+        } else {
+          var menuChange = true;
+        };
         for(var key in item.actions.go.cmd){
           var value=item.actions.go.cmd[key];
           $scope.params.push(value);
-          if (value == 'items') {
-            $scope.params.push(0,100)
-            menuChange = true;
-          }
         }
+        if (menuChange) {
+          $scope.params.push(0,100)
+        };
         for(var key in item.actions.go.params){
           var value=item.actions.go.params[key];
           if (key == 'search') {
@@ -141,9 +145,7 @@ LmsApi.controller('LmsApiCtrl', function($scope, $http, $timeout, $log, localSto
         console.log('something went horribly wrong..');
         return;
       }
-      var params = $scope.submenu(item,action,0);
-      $scope.params = params[0]
-      var menuChange = params[1]
+      var menuChange = $scope.submenu(item,action,0);
       $scope.lmsPost().then(function(r) {
         if (menuChange) {
           if (r.base) {
@@ -162,15 +164,19 @@ LmsApi.controller('LmsApiCtrl', function($scope, $http, $timeout, $log, localSto
     $scope.contextMenu = {};
   }
   $scope.submenu = function(menuitem,action,context) {
-    var menuChange = false;
-    var params=[]
+    if ($scope.baseactions[action].nextWindow == 'parentNoRefresh' ||
+        $scope.baseactions[action].nextWindow == 'nowPlaying') {
+      var menuChange = false;
+    } else {
+      var menuChange = true;
+    };
+    var params=[];
     for (var key in $scope.baseactions[action].cmd) {
       var value = $scope.baseactions[action].cmd[key];
       $scope.params.push(value)
-      if (value == 'items') {
-        $scope.params.push(0,100)
-        menuChange = true;
-      }
+    }
+    if (menuChange) {
+      $scope.params.push(0,100)
     }
     for (var key in $scope.baseactions[action].params) {
       var value = $scope.baseactions[action].params[key];
@@ -180,28 +186,6 @@ LmsApi.controller('LmsApiCtrl', function($scope, $http, $timeout, $log, localSto
       var value = menuitem[$scope.baseactions[action].itemsParams][key];
       $scope.params.push(key + ":" + value)
     }
-    for (var key in $scope.baseactions[action]) {
-      if (key != 'cmd' &&
-          key != 'params' &&
-          key != 'itemsParams') {
-        var value = $scope.baseactions[action][key]
-        if (typeof $scope.baseactions[action][key] != 'object') {
-            $scope.params.push(key + ":" + value)
-        } else {
-          if( Object.prototype.toString.call($scope.baseactions[action][key]) == '[object Array]' ) {
-            for (var subkey in $scope.baseactions[action][key]) {
-              var subvalue = $scope.baseactions[action][key][subkey]
-              $scope.params.push(subvalue)
-            }
-          } else {
-            for (var subkey in $scope.baseactions[action][key]) {
-              var subvalue = $scope.baseactions[action][key][subkey]
-              $scope.params.push(subkey + ":" + subvalue)
-            }
-          }
-        }
-      }
-    }
     $scope.params.push('useContextMenu:1');
     if (context == 1) {
       $scope.params.push('xmlBrowseInterimCM:1');
@@ -209,7 +193,7 @@ LmsApi.controller('LmsApiCtrl', function($scope, $http, $timeout, $log, localSto
         $scope.contextMenu = r;
       })
     } else {
-      return [params,menuChange]
+      return menuChange;
     }
   }
 
