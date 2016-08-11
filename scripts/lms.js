@@ -1,5 +1,5 @@
 'use strict';
-var LmsApi = angular.module('LmsApi', ['ngAnimate','ui.bootstrap','LocalStorageModule', 'ngRoute',  'cfp.hotkeys'])
+var LmsApi = angular.module('LmsApi', ['ngAnimate','ui.bootstrap','LocalStorageModule', 'ngRoute',  'cfp.hotkeys','images-resizer'])
 
 LmsApi.config(function($routeProvider) {
   $routeProvider
@@ -8,20 +8,27 @@ LmsApi.config(function($routeProvider) {
     .otherwise({ redirectTo: '/' });
 })
 
-LmsApi.controller('LmsApiCtrl', function($scope, $http, $timeout, $log, localStorageService, hotkeys, $q){
-  $scope.home = 1;
-  $scope.settings = 0;
-  $scope.params = [];
+LmsApi.controller('LmsApiCtrl', function($filter, $location, $scope, $http, $timeout, $log, localStorageService, hotkeys, resizeService) {
   $scope.TrackPosChange = 0;
   $scope.VolChange = 0;
-  $scope.LmsUrl = 'http://' + localStorageService.get('lmsurl') + ':' + localStorageService.get('lmsport') + '/';
+  var storagelmsurl = localStorageService.get('lmsurl')
+  var storagelmsport = localStorageService.get('lmsport')
+  // If the url or port settings are undefined; jump directly to the settings
+  if (! storagelmsurl || ! storagelmsport) {
+    $location.path('/settings');
+  }
+  // build the lms url from the settings
+  $scope.LmsUrl = 'http://' + storagelmsurl + ':' + storagelmsport + '/';
   var setPlayer = localStorageService.get('player');
+  //get the players
   $http.post($scope.LmsUrl + "jsonrpc.js",'{"id":1,"method":"slim.request","params":["-",["players",0,99]]}').then(function(r) {
     $scope.players = r.data.result;
+    // If there is a player in the settings and it matches with the newly polled player; set it
     if (setPlayer) {
       if (setPlayer.playerid == $scope.players.players_loop[setPlayer.playerindex].playerid) {
         $scope.player = $scope.players.players_loop[setPlayer.playerindex]
       } else {
+      // Else just set the first player of the response
       $scope.player = $scope.players.players_loop[0];
       };
     } else {
@@ -30,47 +37,47 @@ LmsApi.controller('LmsApiCtrl', function($scope, $http, $timeout, $log, localSto
     poller();
     $scope.getmenu();
   });
-  $scope.getmenu = function() {
-    $http.post($scope.LmsUrl + "jsonrpc.js",'{"id":1,"method":"slim.request","params":["' + $scope.player.playerid + '", ["menu", 0, 100, "direct:1"]]}').then(function(r) {
-      $scope.filterisEnable = true;
-      $scope.nodefilter = 'home'
-      $scope.menu = r.data.result;
-      $scope.filterisEnable = true;
-      $scope.orderby = 'weight'
-      $scope.breadCrumbs = [];
-    });
-  };
   var poller = function() {
     $http.post($scope.LmsUrl + "jsonrpc.js", '{"id":1,"method":"slim.request","params":["' + $scope.player.playerid + '", ["status", "0", 999, "tags:alyK"]]}').then(function(r) {
       $scope.data = r.data.result;
+      //get the cover for the current song
+      //if there are tracks in the playlist continue; else set to lms backup cover (id=0)
       if ($scope.data.playlist_tracks!=0) {
+        //if artwork_url is defined, it is an remote cover; else its a local cover which means we can just build the url with the track id
         if ($scope.data.playlist_loop[$scope.data.playlist_cur_index].artwork_url) {
+          //if the remote cover starts with http we can use it directly; else the url is a sufix for the lms url
           if ($scope.data.playlist_loop[$scope.data.playlist_cur_index].artwork_url.startsWith('http')) {
             $scope.CoverUrl = $scope.data.playlist_loop[$scope.data.playlist_cur_index].artwork_url;
           } else {
+            // we can define the size for the cover by adding '_200x200_p' befor the extension
             $scope.CoverUrl = $scope.LmsUrl + $scope.data.playlist_loop[$scope.data.playlist_cur_index].artwork_url;
+            $scope.CoverUrl = $scope.CoverUrl.replace(/(\.[\w\d_-]+)$/i, '_200x200_p$1');
           }
         } else {
-        $scope.CoverUrl = $scope.LmsUrl + "music/" + $scope.data.playlist_loop[$scope.data.playlist_cur_index].id + "/cover_300x300_p.png";
+        $scope.CoverUrl = $scope.LmsUrl + "music/" + $scope.data.playlist_loop[$scope.data.playlist_cur_index].id + "/cover_200x200_p.png";
         };
       } else {
-        $scope.CoverUrl = $scope.LmsUrl + "music/" + 0 + "/cover_300x300_p.png";
+        $scope.CoverUrl = $scope.LmsUrl + "music/0/cover_200x200_p.png";
       };
+      //Don't set the volume while changing it
       if ($scope.VolChange == 0) {
         $scope.volume = $scope.data['mixer volume']
       };
+      //Don't set the trackpos while changing it
       if ($scope.TrackPosChange == 0) {
         if ($scope.data.time) {
-          $scope.trackpos = $scope.data.time
+          $scope.trackpos = $filter('number')($scope.data.time,0);
         } else {
           $scope.trackpos = 0
         };
       };
+      // If a player in the settings is defined and it differs from the current on; set the current one
       if (setPlayer) {
         if (setPlayer.playerid != $scope.player.playerid) {
           localStorageService.set('player',$scope.player);
           setPlayer = $scope.player;
         };
+      // If no player is in the settings set the current one
       } else {
         localStorageService.set('player',$scope.player);
         setPlayer = $scope.player;
@@ -78,23 +85,48 @@ LmsApi.controller('LmsApiCtrl', function($scope, $http, $timeout, $log, localSto
       $timeout(poller, 500);
     });
   };
-  $scope.lmsPost = function() {
-    var params = $scope.params.slice(0);
-    $scope.params.length = 0;
+  $scope.lmsPost = function(params,menuparams) {
     console.log("lmsPost: " + params);
     return $http.post($scope.LmsUrl + "jsonrpc.js",'{"id":1,"method":"slim.request","params":["' + $scope.player.playerid + '",' + angular.toJson(params) + ']}').then(function(r) {
-      console.log(r.data.result);
+      if (menuparams){
+        if (menuparams[0]) {
+          if (r.data.result.base) {
+            $scope.baseactions=r.data.result.base.actions;
+          } else {
+            $scope.baseactions=0;
+          };
+          $scope.menu=r.data.result;
+          $scope.filterisEnable=menuparams[1];
+          $scope.orderby = menuparams[2];
+          $scope.breadCrumbs.push([menuparams[3],$scope.filterisEnable,$scope.orderby,$scope.baseactions,$scope.menu])
+        };
+      };
       return r.data.result;
     });
   }
+  // function for getting the main menu and setting all the required vars
+  $scope.getmenu = function() {
+    $scope.lmsPost(["menu", 0, 100, "direct:1"]).then(function(r) {
+      $scope.filterisEnable = true;
+      $scope.nodefilter = 'home'
+      $scope.menu = r;
+      $scope.filterisEnable = true;
+      $scope.orderby = 'weight'
+      $scope.breadCrumbs = [];
+    })
+  };
+  // function to handle navigation in the menu
   $scope.menufunc = function(item) {
     console.log(item);
-    if (item.action == 'none') { return }
+    var params = [];
+    if (item.action == 'none') {
+      return
+    };
     if (item.actions) {
       if (item.actions.do) {
         console.log("do");
-        $scope.params.push.apply($scope.params,item.actions.do.cmd);
-        $scope.lmsPost();
+        params.push.apply(params,item.actions.do.cmd);
+        $scope.lmsPost(params);
         $scope.getmenu();
       } else if (item.actions.go) {
         console.log("go");
@@ -106,10 +138,10 @@ LmsApi.controller('LmsApiCtrl', function($scope, $http, $timeout, $log, localSto
         };
         for(var key in item.actions.go.cmd){
           var value=item.actions.go.cmd[key];
-          $scope.params.push(value);
+          params.push(value);
         }
         if (menuChange) {
-          $scope.params.push(0,100)
+          params.push(0,100)
         };
         for(var key in item.actions.go.params){
           var value=item.actions.go.params[key];
@@ -117,22 +149,10 @@ LmsApi.controller('LmsApiCtrl', function($scope, $http, $timeout, $log, localSto
             console.log('this is a search item, use the search input');
             return;
           }
-          $scope.params.push(key + ":" + value);
+          params.push(key + ":" + value);
         }
-        $scope.params.push('useContextMenu:1')
-        $scope.lmsPost().then(function(r) {
-          if (menuChange) {
-            if (r.base) {
-              $scope.baseactions=r.base.actions;
-            } else {
-              $scope.baseactions=0;
-            }
-            $scope.menu=r;
-            $scope.filterisEnable=false;
-            $scope.orderby = '$index';
-            $scope.breadCrumbs.push([item,$scope.filterisEnable,$scope.orderby,$scope.baseactions,$scope.menu])
-          };
-        })
+        params.push('useContextMenu:1')
+        $scope.lmsPost(params,[menuChange,false,'$index',item]);
       }
     } else if (item.isANode) {
       $scope.nodefilter = item.id;
@@ -148,53 +168,43 @@ LmsApi.controller('LmsApiCtrl', function($scope, $http, $timeout, $log, localSto
         console.log('something went horribly wrong..');
         return;
       }
-      var menuChange = $scope.submenu(item,action,0);
-      $scope.lmsPost().then(function(r) {
-        if (menuChange) {
-          if (r.base) {
-            $scope.baseactions=r.base.actions;
-          } else {
-            $scope.baseactions=0;
-          }
-          $scope.menu=r;
-          $scope.filterisEnable=false;
-          $scope.orderby = '$index';
-          $scope.breadCrumbs.push([item,$scope.filterisEnable,$scope.orderby,$scope.baseactions,$scope.menu])
-        };
-      })
+      var retparams = $scope.submenu(item,action,0);
+      params = retparams[0];
+      menuChange = retparams[1];
+      $scope.lmsPost(params,[menuChange,false,'$index',item]);
     };
   };
   $scope.submenu = function(menuitem,action,context) {
+    var params = [];
     if ($scope.baseactions[action].nextWindow == 'parentNoRefresh' ||
         $scope.baseactions[action].nextWindow == 'nowPlaying') {
       var menuChange = false;
     } else {
       var menuChange = true;
     };
-    var params=[];
     for (var key in $scope.baseactions[action].cmd) {
       var value = $scope.baseactions[action].cmd[key];
-      $scope.params.push(value)
+      params.push(value)
     }
     if (menuChange) {
-      $scope.params.push(0,100)
+      params.push(0,100)
     }
     for (var key in $scope.baseactions[action].params) {
       var value = $scope.baseactions[action].params[key];
-      $scope.params.push(key + ":" + value)
+      params.push(key + ":" + value)
     }
     for (var key in menuitem[$scope.baseactions[action].itemsParams]) {
       var value = menuitem[$scope.baseactions[action].itemsParams][key];
-      $scope.params.push(key + ":" + value)
+      params.push(key + ":" + value)
     }
-    $scope.params.push('useContextMenu:1');
+    params.push('useContextMenu:1');
     if (context == 1) {
-      $scope.params.push('xmlBrowseInterimCM:1');
-      $scope.lmsPost().then(function(r) {
+      params.push('xmlBrowseInterimCM:1');
+      $scope.lmsPost(params).then(function(r) {
         $scope.contextMenu = r;
       })
     } else {
-      return menuChange;
+      return [params,menuChange];
     }
   }
 
@@ -205,30 +215,21 @@ LmsApi.controller('LmsApiCtrl', function($scope, $http, $timeout, $log, localSto
 
   // the search item is '__TAGGEDINPUT__'; so we replace that with the search input
   $scope.search = function(item,searchInput) {
+    var params = [];
     for(var key in item.actions.go.cmd){
       var value=item.actions.go.cmd[key];
-      $scope.params.push(value);
+      params.push(value);
     }
-    $scope.params.push(0,100)
+    params.push(0,100)
     for(var key in item.actions.go.params){
       var value=item.actions.go.params[key];
       if (value=='__TAGGEDINPUT__'){
         value=searchInput;
       };
-      $scope.params.push(key + ":" + value);
+      params.push(key + ":" + value);
     }
-    $scope.params.push('useContextMenu:1');
-    $scope.lmsPost().then(function(r) {
-      if (r.base) {
-        $scope.baseactions=r.base.actions;
-      } else {
-        $scope.baseactions=0;
-      }
-      $scope.menu=r;
-      $scope.filterisEnable=false;
-      $scope.orderby = '$index';
-      $scope.breadCrumbs.push([item,$scope.filterisEnable,$scope.orderby,$scope.baseactions,$scope.menu])
-    })
+    params.push('useContextMenu:1');
+    $scope.lmsPost(params,[true,false,'$index',item]);
   };
 
   $scope.breadCrumbfunc = function(index) {
@@ -252,45 +253,40 @@ LmsApi.controller('LmsApiCtrl', function($scope, $http, $timeout, $log, localSto
       combo: 'space',
       description: 'Play/Pause',
       callback: function() {
-        $scope.params.push('pause');
-        $scope.lmsPost()
+        $scope.lmsPost(['pause']);
       }
     })
     .add({
       combo: 'left',
       description: 'Previous Track',
       callback: function() {
-        $scope.params.push('button','jump_rew');
-        $scope.lmsPost()
+        $scope.lmsPost(['button','jump_rew']);
       }
     })
     .add({
       combo: 'right',
       description: 'Next Track',
       callback: function() {
-        $scope.params.push('button','jump_fwd');
-        $scope.lmsPost()
+        $scope.lmsPost(['button','jump_fwd']);
       }
     })
     .add({
       combo: 'up',
       description: 'Volume Up',
       callback: function() {
-        $scope.params.push('mixer','volume','+2');
-        $scope.lmsPost()
+        $scope.lmsPost(['mixer','volume','+2']);
       }
     })
     .add({
       combo: 'down',
       description: 'Volume Down',
       callback: function() {
-        $scope.params.push('mixer','volume','-2');
-        $scope.lmsPost()
+        $scope.lmsPost(['mixer','volume','-2']);
       }
     })
 });
 
-LmsApi.controller('SettingsCtrl', function($scope, $log, localStorageService){
+LmsApi.controller('SettingsCtrl', function($scope, $log, localStorageService, $route){
   $scope.lmsurl = localStorageService.get('lmsurl')
   $scope.lmsport = localStorageService.get('lmsport')
   $scope.saveSettings = function(settings) {
@@ -302,6 +298,7 @@ LmsApi.controller('SettingsCtrl', function($scope, $log, localStorageService){
   }
   $scope.clearSettings = function() {
     localStorageService.clearAll();
+    $route.reload();
   }
 });
 

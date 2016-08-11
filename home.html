@@ -1,7 +1,7 @@
 <div ng-controller="LmsApiCtrl">
   <div class="row">
     <div class="col-sm-3">
-      <img style="padding: 25px 25px 25px 25px;" class="img-responsive img-center" ng-if="CoverUrl" ng-src="{{CoverUrl}}"></img>
+      <img class="img-cover" ng-if="CoverUrl" ng-src="{{CoverUrl}}"></img>
     </div>
     <div class="col-sm-6">
       <p ng-if="data.playlist_cur_index" align="center" style="font-size:1.5em;">
@@ -14,11 +14,11 @@
         {{data.playlist_loop[data.playlist_cur_index].album}} ({{data.playlist_loop[data.playlist_cur_index].year}})
       </p>
       <p style="margin-top:25px;margin-bottom:25px;" align="center">
-        <span style="margin-left:35px;margin-right:35px;font-size:2em;" class="glyphicon glyphicon-step-backward clickable" ng-mousedown="params.push('button','jump_rew');lmsPost();"></span>
-        <span style="margin-left:35px;margin-right:35px;font-size:2em;" ng-class="data.mode != 'play' ? 'glyphicon glyphicon-play clickable' : 'glyphicon glyphicon-pause clickable';" ng-mousedown="params.push('pause');lmsPost();"></span>
-        <span style="margin-left:35px;margin-right:35px;font-size:2em;" class="glyphicon glyphicon-step-forward clickable" ng-mousedown="params.push('button','jump_fwd');lmsPost();"></span>
+        <span class="glyphicon glyphicon-step-backward clickable control-button" ng-mousedown="lmsPost(['button','jump_rew']);"></span>
+        <span ng-class="data.mode != 'play' ? 'glyphicon glyphicon-play clickable control-button' : 'glyphicon glyphicon-pause clickable control-button';" ng-mousedown="lmsPost(['pause']);"></span>
+        <span class="glyphicon glyphicon-step-forward clickable control-button" ng-mousedown="lmsPost(['button','jump_fwd']);"></span>
       </p>
-      <input style="margin-bottom:10px;margin-top:0px;" class="clickable" type="range" min="0" max="{{data.duration}}" ng-model="trackpos" ng-mousedown="TrackPosChange=1;" ng-mouseup="params.push('time',trackpos);lmsPost();TrackPosChange=0;">
+      <input style="margin-bottom:10px;margin-top:0px;" class="clickable" type="range" min="0" max="{{data.duration ? data.duration : 0}}" ng-model="trackpos" ng-mousedown="TrackPosChange=1;" ng-mouseup="lmsPost(['time',trackpos]);TrackPosChange=0;">
       <p style="text-align:left;">
         {{trackpos | number:0 | secondsToDateTime | date:'HH:mm:ss'}}
         <span ng-if="data.duration" style="float:right;">{{data.duration | number:0 | secondsToDateTime | date:'HH:mm:ss'}}</span>
@@ -28,7 +28,7 @@
     <div class="col-sm-3">
       <select class="form-control clickable" ng-model="player" ng-options="player.name for player in players.players_loop"></select>
       <p style="margin-bottom:5px;margin-top:10px;">Volume: {{volume}}</p>
-      <input style="margin-bottom:10px;margin-top:0px;" class="clickable" type="range" min="0" max="100" ng-model="volume" ng-mousedown="VolChange=1;" ng-mouseup="params.push('mixer','volume',volume);lmsPost();VolChange=0;">
+      <input style="margin-bottom:10px;margin-top:0px;" class="clickable" type="range" min="0" max="100" ng-model="volume" ng-mousedown="VolChange=1;" ng-mouseup="lmsPost(['mixer','volume',volume]);VolChange=0;">
     </div>
   </div>
   <div class="row top-buffer">
@@ -86,19 +86,19 @@
           <tr colspan="2">
             <th class="td-content">Playlist:</th>
             <th class="text-right text-nowrap vert-align">
-              <button class="btn btn-sm btn-danger" ng-mousedown="params.push('playlist','clear');lmsPost();"><span class="glyphicon glyphicon-trash gi-v-centered"></span></button>
+              <button class="btn btn-sm btn-danger" ng-mousedown="lmsPost(['playlist','clear']);"><span class="glyphicon glyphicon-trash gi-v-centered"></span></button>
             </th>
           </td>
         </thead>
         <tbody>
           <tr ng-if="data.playlist_tracks!=0" ng-repeat="title in data.playlist_loop" ng-class="title['playlist index'] == data.playlist_cur_index ? 'active' : '';"  style="font-size:0.9em;">
-            <td class="td-content clickable" ng-mousedown="params.push('playlist','index',title['playlist index']);lmsPost();">
+            <td class="td-content clickable" ng-mousedown="lmsPost(['playlist','index',title['playlist index']]);">
               <b>{{title.title}}</b><br>
               {{title.artist}}<br>
               {{title.album}}
             </td>
             <td class="text-right text-nowrap">
-              <button class="btn btn-sm btn-warning" ng-mousedown="params.push('playlist','delete',title['playlist index']);lmsPost();">
+              <button class="btn btn-sm btn-warning" ng-mousedown="lmsPost(['playlist','delete',title['playlist index']]);">
                 <span class="glyphicon glyphicon-trash gi-v-centered"></span>
               </button>
             </td>

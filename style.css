@@ -1,5 +1,18 @@
+.control-button{
+  margin: 0px 35px;
+  font-size: 2em;
+}
+
+.img-cover{
+  padding: 10px;
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: auto;
+}
+
 .search-form {
-    margin:0px;
+  margin:0px;
 }
 
 body {
@@ -56,7 +69,6 @@ body {
 .gi-4x{font-size: 4em;}
 .gi-5x{font-size: 5em;}
 
-.img-center {margin:0 auto;}
 .top-buffer {margin-top:20px;}
 
 input[type=range] {
