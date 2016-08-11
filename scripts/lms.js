@@ -37,6 +37,7 @@ LmsApi.controller('LmsApiCtrl', function($scope, $http, $timeout, $log, localSto
       $scope.menu = r.data.result;
       $scope.filterisEnable = true;
       $scope.orderby = 'weight'
+      $scope.breadCrumbs = [];
     });
   };
   var poller = function() {
@@ -129,11 +130,13 @@ LmsApi.controller('LmsApiCtrl', function($scope, $http, $timeout, $log, localSto
             $scope.menu=r;
             $scope.filterisEnable=false;
             $scope.orderby = '$index';
+            $scope.breadCrumbs.push([item,$scope.filterisEnable,$scope.orderby,$scope.baseactions,$scope.menu])
           };
         })
       }
     } else if (item.isANode) {
       $scope.nodefilter = item.id;
+      $scope.breadCrumbs.push([item,$scope.filterisEnable,$scope.orderby,$scope.baseactions,$scope.menu])
     } else {
       if (item.goAction) {
         var action = item.goAction
@@ -156,13 +159,11 @@ LmsApi.controller('LmsApiCtrl', function($scope, $http, $timeout, $log, localSto
           $scope.menu=r;
           $scope.filterisEnable=false;
           $scope.orderby = '$index';
+          $scope.breadCrumbs.push([item,$scope.filterisEnable,$scope.orderby,$scope.baseactions,$scope.menu])
         };
       })
     };
   };
-  $scope.ddClose = function() {
-    $scope.contextMenu = {};
-  }
   $scope.submenu = function(menuitem,action,context) {
     if ($scope.baseactions[action].nextWindow == 'parentNoRefresh' ||
         $scope.baseactions[action].nextWindow == 'nowPlaying') {
@@ -197,14 +198,18 @@ LmsApi.controller('LmsApiCtrl', function($scope, $http, $timeout, $log, localSto
     }
   }
 
+  // On dropdown close empty the contextMenu object. (so its clean when opened again)
+  $scope.ddClose = function() {
+    $scope.contextMenu = {};
+  }
+
+  // the search item is '__TAGGEDINPUT__'; so we replace that with the search input
   $scope.search = function(item,searchInput) {
     for(var key in item.actions.go.cmd){
       var value=item.actions.go.cmd[key];
       $scope.params.push(value);
-      if (value == 'items') {
-        $scope.params.push(0,100)
-      }
     }
+    $scope.params.push(0,100)
     for(var key in item.actions.go.params){
       var value=item.actions.go.params[key];
       if (value=='__TAGGEDINPUT__'){
@@ -214,18 +219,34 @@ LmsApi.controller('LmsApiCtrl', function($scope, $http, $timeout, $log, localSto
     }
     $scope.params.push('useContextMenu:1');
     $scope.lmsPost().then(function(r) {
+      if (r.base) {
+        $scope.baseactions=r.base.actions;
+      } else {
+        $scope.baseactions=0;
+      }
       $scope.menu=r;
       $scope.filterisEnable=false;
+      $scope.orderby = '$index';
+      $scope.breadCrumbs.push([item,$scope.filterisEnable,$scope.orderby,$scope.baseactions,$scope.menu])
     })
   };
 
+  $scope.breadCrumbfunc = function(index) {
+    $scope.filterisEnable = $scope.breadCrumbs[index][1];
+    $scope.orderby = $scope.breadCrumbs[index][2];
+    $scope.baseactions = $scope.breadCrumbs[index][3];
+    $scope.menu = $scope.breadCrumbs[index][4];
+    $scope.breadCrumbs.splice(index+1,99);
+  };
+
+  // prevent default action of arrow and space keys; only in document.body (so they still work in an imput field)
   window.addEventListener("keydown", function(e) {
-    // space and arrow keys
     if([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1 && e.target == document.body) {
         e.preventDefault();
     }
   }, false);
 
+  // define kotkeys
   hotkeys.bindTo($scope)
     .add({
       combo: 'space',
