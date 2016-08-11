@@ -6,4 +6,4 @@ install:
 - npm install electron-packager -g
 
 script:
-- electron-packager squeeze-controller squeeze-controller --platform="linux,win32,darwin" --arch="ia32,x64" --asar
+- electron-packager . squeeze-controller --platform="linux,win32,darwin" --arch="ia32,x64" --asar
