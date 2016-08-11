@@ -11,8 +11,14 @@ LmsApi.config(function($routeProvider) {
 LmsApi.controller('LmsApiCtrl', function($filter, $location, $scope, $http, $timeout, $log, localStorageService, hotkeys) {
   $scope.TrackPosChange = 0;
   $scope.VolChange = 0;
-  var storagelmsurl = localStorageService.get('lmsurl')
-  var storagelmsport = localStorageService.get('lmsport')
+  $scope.bubbletips = localStorageService.get('bubbletips');
+  if ($scope.bubbletips == null) {
+    console.log('Settings bubbletips to their default value (true)');
+    $scope.bubbletips = true;
+    localStorageService.set('bubbletips',true);
+  };
+  var storagelmsurl = localStorageService.get('lmsurl');
+  var storagelmsport = localStorageService.get('lmsport');
   // If the url or port settings are undefined; jump directly to the settings
   if (! storagelmsurl || ! storagelmsport) {
     $location.path('/settings');
@@ -287,12 +293,12 @@ LmsApi.controller('LmsApiCtrl', function($filter, $location, $scope, $http, $tim
 });
 
 LmsApi.controller('SettingsCtrl', function($scope, $log, localStorageService, $route){
-  $scope.lmsurl = localStorageService.get('lmsurl')
-  $scope.lmsport = localStorageService.get('lmsport')
+  $scope.lmsurl = localStorageService.get('lmsurl');
+  $scope.lmsport = localStorageService.get('lmsport');
+  $scope.bubbletips = localStorageService.get('bubbletips');
   $scope.saveSettings = function(settings) {
-    for(var keyName in settings){
-      var key=keyName;
-      var value=settings[keyName];
+    for(var key in settings){
+      var value=settings[key];
       localStorageService.set(key, value);
     }
   }
