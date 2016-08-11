@@ -1,0 +1,9 @@
+language: node_js
+node_js: 4.2.x
+
+install:
+- npm install
+- npm install electron-packager -g
+
+script:
+- electron-packager squeeze-controller squeeze-controller --platform="linux,win32mdarwin" --arch="ia32,x64" --asar
