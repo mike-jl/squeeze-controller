@@ -20,9 +20,9 @@
       </p>
       <input style="margin-bottom:10px;margin-top:0px;" class="clickable" type="range" min="0" max="{{data.duration ? data.duration : 0}}" ng-model="trackpos" ng-mousedown="TrackPosChange=1;" ng-mouseup="lmsPost(['time',trackpos]);TrackPosChange=0;">
       <p style="text-align:left;">
-        {{trackpos | number:0 | secondsToDateTime | date:'HH:mm:ss'}}
-        <span ng-if="data.duration" style="float:right;">{{data.duration | number:0 | secondsToDateTime | date:'HH:mm:ss'}}</span>
-        <span ng-if="!data.duration" style="float:right;">{{0 | number:0 | secondsToDateTime | date:'HH:mm:ss'}}</span>
+        {{trackpos | num | secondsToDateTime | date:'HH:mm:ss'}}
+        <span ng-if="data.duration" style="float:right;">{{data.duration | num | secondsToDateTime | date:'HH:mm:ss'}}</span>
+        <span ng-if="!data.duration" style="float:right;">{{0 | num | secondsToDateTime | date:'HH:mm:ss'}}</span>
       </p>
     </div>
     <div class="col-sm-3">

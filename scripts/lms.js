@@ -66,7 +66,7 @@ LmsApi.controller('LmsApiCtrl', function($filter, $location, $scope, $http, $tim
       //Don't set the trackpos while changing it
       if ($scope.TrackPosChange == 0) {
         if ($scope.data.time) {
-          $scope.trackpos = $filter('number')($scope.data.time,0);
+          $scope.trackpos = $scope.data.time;
         } else {
           $scope.trackpos = 0
         };
@@ -311,6 +311,12 @@ LmsApi.filter('menu_filter', ['$filter', function($filter) {
     };
   };
 }])
+
+LmsApi.filter('num', function() {
+    return function(input) {
+      return parseInt(input, 10);
+    };
+});
 
 LmsApi.filter('secondsToDateTime', [function() {
   return function(seconds) {
