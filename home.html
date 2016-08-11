@@ -49,7 +49,7 @@
           <tr ng-if="menu" ng-repeat="menuitem in menu.item_loop | menu_filter:'node':nodefilter:filterisEnable | orderBy:orderby track by $index">
             <td>
               <div style='width:{{100-menuContentWidth}}%;' class="pre-whitespace first-line-bold clickable dot-overflow menu-float-left"
-              ng-init="menuContentWidth=0" ng-mousedown="menufunc(menuitem)">{{menuitem.text}}</div>
+              ng-init="menuContentWidth=0" title="{{menuitem.text}}" ng-mousedown="menufunc(menuitem)">{{menuitem.text}}</div>
               <div style='width:{{$parent.menuContentWidth = 10}}%;' ng-if="menuitem.params.isContextMenu || menuitem.type == 'playlist' || menuitem.type == 'audio'" class="menu-float-right text-nowrap">
                 <div class="btn-group vert-align" uib-dropdown on-toggle="open ? submenu(menuitem,'more',1) : ddClose()">
                   <button class="btn btn-xs" type="button" uib-dropdown-toggle id="{{menuitem.commonParams.album_id}}">

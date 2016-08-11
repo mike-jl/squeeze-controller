@@ -37,6 +37,7 @@ body {
 .td-content{
   width: 85%;
 }
+
 .first-line-bold::first-line {
   font-weight:bold;
 }
