@@ -4,20 +4,20 @@
       <img class="img-cover" ng-if="CoverUrl" ng-src="{{CoverUrl}}"></img>
     </div>
     <div class="col-sm-6">
-      <p ng-if="data.playlist_cur_index" align="center" style="font-size:1.5em;">
+      <div class="title-style" ng-style="{'visibility':(data.playlist_cur_index | typeof)!='undefined'?'visible':'hidden'}">
         {{data.playlist_loop[data.playlist_cur_index]['playlist index'] + 1}}. {{data.playlist_loop[data.playlist_cur_index].title}}
-      </p>
-      <p ng-if="data.playlist_cur_index" align="center" style="font-size:1.2em;">
-        {{data.playlist_loop[data.playlist_cur_index].artist}}
-      </p>
-      <p ng-if="data.playlist_cur_index && data.playlist_loop[data.playlist_cur_index].album" align="center" style="font-size:1.2em;">
+      </div>
+      <div class="artist-album-style" ng-style="{'visibility':(data.playlist_loop[data.playlist_cur_index].artist | typeof)!='undefined'?'visible':'hidden'}">
+        {{data.playlist_loop[data.playlist_cur_index].artist ? data.playlist_loop[data.playlist_cur_index].artist : 'space'}}
+      </div>
+      <div class="artist-album-style" ng-style="{'visibility':(data.playlist_loop[data.playlist_cur_index].album | typeof)!='undefined'?'visible':'hidden'}">
         {{data.playlist_loop[data.playlist_cur_index].album}} ({{data.playlist_loop[data.playlist_cur_index].year}})
-      </p>
-      <p style="margin-top:25px;margin-bottom:25px;" align="center">
+      </div>
+      <div class="control-button-container">
         <span class="glyphicon glyphicon-step-backward clickable control-button" ng-mousedown="lmsPost(['button','jump_rew']);"></span>
         <span ng-class="data.mode != 'play' ? 'glyphicon glyphicon-play clickable control-button' : 'glyphicon glyphicon-pause clickable control-button';" ng-mousedown="lmsPost(['pause']);"></span>
         <span class="glyphicon glyphicon-step-forward clickable control-button" ng-mousedown="lmsPost(['button','jump_fwd']);"></span>
-      </p>
+      </div>
       <input style="margin-bottom:10px;margin-top:0px;" class="clickable" type="range" min="0" max="{{data.duration ? data.duration : 0}}" ng-model="trackpos" ng-mousedown="TrackPosChange=1;" ng-mouseup="lmsPost(['time',trackpos]);TrackPosChange=0;">
       <p style="text-align:left;">
         {{trackpos | num | secondsToDateTime | date:'HH:mm:ss'}}
@@ -27,6 +27,22 @@
     </div>
     <div class="col-sm-3">
       <select class="form-control clickable" ng-model="player" ng-options="player.name for player in players.players_loop"></select>
+      <div class="btn-group btn-group-justified" role="group" style="margin-top:10px;">
+        <a href="#/" type="button" ng-class="data.power == 1 ? 'btn btn-info' : 'btn btn-default'" ng-click="lmsPost(['power'])"
+           ng-attr-title="{{ data.power == 0 ? 'Power Off' : 'Power On' }}">
+          <span class="glyphicon glyphicon-off"></span>
+        </a>
+        <a href="#/" type="button" ng-class="data['playlist repeat'] > 0 ? 'btn btn-info' : 'btn btn-default'" ng-click="lmsPost(['playlist', 'repeat'])"
+           ng-attr-title="{{ repeatText }}">
+          <span class="glyphicon glyphicon-repeat"></span>
+          <span ng-if="data['playlist repeat'] == 1" class="glyphicon glyphicon-music label-gi-btn"></span>
+        </a>
+        <a href="#/" type="button" ng-class="data['playlist shuffle'] > 0 ? 'btn btn-info' : 'btn btn-default'" ng-click="lmsPost(['playlist', 'shuffle'])"
+           ng-attr-title="{{ shuffleText }}">
+          <span class="glyphicon glyphicon-random"></span>
+          <span ng-if="data['playlist shuffle'] == 2" class="glyphicon glyphicon-cd label-gi-btn"></span>
+        </a>
+      </div>
       <p style="margin-bottom:5px;margin-top:10px;">Volume: {{volume}}</p>
       <input style="margin-bottom:10px;margin-top:0px;" class="clickable" type="range" min="0" max="100" ng-model="volume" ng-mousedown="VolChange=1;" ng-mouseup="lmsPost(['mixer','volume',volume]);VolChange=0;">
     </div>

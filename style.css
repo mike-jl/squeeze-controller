@@ -1,9 +1,33 @@
-.control-button{
+.control-button-container {
+  margin-top: 25px;
+  margin-bottom: 25px;
+  text-align: center;
+}
+
+.title-style {
+  font-size: 160%;
+  text-align: center;
+}
+
+.artist-album-style {
+  font-size: 120%;
+  text-align: center;
+}
+
+.label-gi-btn {
+  position:absolute;
+  font-size: 0.7em;
+  top: 65%;
+  left: 70%;
+  transform: translate(-50%, -50%);
+}
+
+.control-button {
   margin: 0px 35px;
   font-size: 2em;
 }
 
-.img-cover{
+.img-cover {
   padding: 10px;
   max-width: 100%;
   height: auto;

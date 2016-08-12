@@ -89,6 +89,22 @@ LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $ti
         localStorageService.set('player', $scope.player)
         setPlayer = $scope.player
       }
+      // Set title for the repeate button
+      if ($scope.data['playlist repeat'] === 0) {
+        $scope.repeatText = 'Repeat Off'
+      } else if ($scope.data['playlist repeat'] === 1) {
+        $scope.repeatText = 'Repeat Current Title'
+      } else if ($scope.data['playlist repeat'] === 2) {
+        $scope.repeatText = 'Repeat Playlist'
+      }
+      // Set title for the shuffle button
+      if ($scope.data['playlist shuffle'] === 0) {
+        $scope.shuffleText = 'Shuffle Off'
+      } else if ($scope.data['playlist shuffle'] === 1) {
+        $scope.shuffleText = 'Shuffle by Song'
+      } else if ($scope.data['playlist shuffle'] === 2) {
+        $scope.shuffleText = 'Shuffle by Album'
+      }
       $timeout(poller, 500)
     })
   }
@@ -331,5 +347,11 @@ LmsApi.filter('num', function () {
 LmsApi.filter('secondsToDateTime', function () {
   return function (seconds) {
     return new Date(1970, 0, 1).setSeconds(seconds)
+  }
+})
+
+LmsApi.filter('typeof', function () {
+  return function (input) {
+    return typeof input
   }
 })
