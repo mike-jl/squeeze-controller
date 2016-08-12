@@ -8,6 +8,7 @@
   "description": "Webapp for controlling the Logitech Media Server",
 
   "scripts": {
+    "start": "electron .",
     "test": "standard"
   },
 
