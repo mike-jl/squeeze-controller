@@ -1,17 +1,25 @@
 language: node_js
-node_js: 4.2.6
+node_js: node
+addons:
+  apt:
+    packages:
+      - xvfb
 install:
+  - export DISPLAY=':99.0'
+  - Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
   - npm install
   - npm install electron-packager -g
 script:
-  - electron-packager . squeeze-controller --platform="linux,win32,darwin" --arch="ia32,x64" --asar
+  - npm test
+  - npm prune --production
+  - timeout 10 npm start
+  - electron-packager . --platform="linux,win32,darwin" --arch=all --asar
 before_deploy:
-  - tar -czvf squeeze-controller-darwin-x64.tar.gz squeeze-controller-darwin-x64
-  - tar -czvf squeeze-controller-linux-x64.tar.gz squeeze-controller-linux-x64
-  - tar -czvf squeeze-controller-linux-ia32.tar.gz squeeze-controller-linux-ia32
-  - zip -r squeeze-controller-win32-x64.zip squeeze-controller-win32-x64
-  - zip -r squeeze-controller-win32-ia32.zip squeeze-controller-win32-ia32
-
+  - tar -czvf squeeze-controller-darwin-x64.tar.gz "Squeeze Controller-darwin-x64"
+  - tar -czvf squeeze-controller-linux-x64.tar.gz "Squeeze Controller-linux-x64"
+  - tar -czvf squeeze-controller-linux-ia32.tar.gz "Squeeze Controller-linux-ia32"
+  - zip -r squeeze-controller-win32-x64.zip "Squeeze Controller-win32-x64"
+  - zip -r squeeze-controller-win32-ia32.zip "Squeeze Controller-win32-ia32"
 deploy:
   provider: releases
   api_key:
