@@ -1,5 +1,6 @@
 {
   "name": "squeeze-controller",
+  "productName": "Squeeze Controller",
   "version": "0.1.0-alpha.1",
   "main": "main.js",
   "license": "MIT",
