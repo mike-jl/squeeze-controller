@@ -134,7 +134,7 @@ LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $ti
         console.log('Action: do; without baseaction')
         params.push.apply(params, item.actions.do.cmd)
         $scope.lmsPost(params)
-        $scope.getmenu()
+        $timeout($scope.getmenu, 600)
       } else if (item.actions.go) {
         console.log('Action: go; without baseaction')
         var menuChange = true
