@@ -1,6 +1,6 @@
 const {app, BrowserWindow} = require('electron')
 
-require('electron-debug')({enabled: true});
+require('electron-debug')({enabled: true})
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -9,12 +9,12 @@ let win
 function createWindow () {
   // Create the browser window.
   win = new BrowserWindow({
-    name: "squeeze-controller",
+    name: 'squeeze-controller',
     width: 800,
     height: 600,
     minWidth: 800,
     minHeight: 600,
-    toolbar: false,
+    toolbar: false
   })
 
   // Disable menu bar
