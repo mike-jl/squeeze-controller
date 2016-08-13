@@ -36,6 +36,14 @@ body {
   margin: auto;
 }
 
+.scroll::-webkit-scrollbar {
+  width: 5px;
+}
+
+.scroll::-webkit-scrollbar-thumb {
+  background: #666;
+}
+
 .control-button-container {
   margin-top: 25px;
   margin-bottom: 25px;
