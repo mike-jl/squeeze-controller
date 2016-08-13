@@ -44,6 +44,12 @@ body {
   background: #666;
 }
 
+.dropdown-menu {
+    width: 300px;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
 .control-button-container {
   margin-top: 25px;
   margin-bottom: 25px;
