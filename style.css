@@ -1,3 +1,41 @@
+body {
+  padding-bottom: 35px;
+}
+
+.wrapper, html, body {
+  height:100%;
+  margin:0;
+}
+.wrapper {
+  display: flex;
+  flex-direction: column;
+}
+.header-row {
+  flex:0 0 240px;
+  display: flex;
+}
+.content-row {
+  flex:1 0 0;
+  display: flex;
+}
+.col-50 {
+  overflow-y: auto;
+  flex :0 0 50%;
+  padding: 15px;
+}
+.col-25 {
+  overflow-y: auto;
+  flex :0 0 25%;
+  padding: 15px;
+}
+
+.img-cover {
+  padding: 5px;
+  height: 180px;
+  display: block;
+  margin: auto;
+}
+
 .control-button-container {
   margin-top: 25px;
   margin-bottom: 25px;
@@ -27,22 +65,8 @@
   font-size: 2em;
 }
 
-.img-cover {
-  padding: 10px;
-  max-width: 100%;
-  height: auto;
-  display: block;
-  margin: auto;
-}
-
 .search-form {
   margin:0px;
-}
-
-body {
-  padding:10px;
-  padding-bottom:30px;
-  overflow-x: hidden;
 }
 
 .clickable {

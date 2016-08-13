@@ -1,9 +1,9 @@
-<div ng-controller="LmsApiCtrl">
-  <div class="row">
-    <div class="col-sm-3">
+<div class="wrapper" ng-controller="LmsApiCtrl">
+  <div class="header-row">
+    <div class="col-25">
       <img class="img-cover" ng-if="CoverUrl" ng-src="{{CoverUrl}}"></img>
     </div>
-    <div class="col-sm-6">
+    <div class="col-50">
       <div class="title-style" ng-style="{'visibility':(data.playlist_cur_index | typeof)!='undefined'?'visible':'hidden'}">
         {{data.playlist_loop[data.playlist_cur_index]['playlist index'] + 1}}. {{data.playlist_loop[data.playlist_cur_index].title}}
       </div>
@@ -25,7 +25,7 @@
         <span ng-if="!data.duration" style="float:right;">{{0 | num | secondsToDateTime | date:'HH:mm:ss'}}</span>
       </p>
     </div>
-    <div class="col-sm-3">
+    <div class="col-25">
       <select class="form-control clickable" ng-model="player" ng-options="player.name for player in players.players_loop"></select>
       <div class="btn-group btn-group-justified" role="group" style="margin-top:10px;">
         <a href="#/" type="button" ng-class="data.power == 1 ? 'btn btn-info' : 'btn btn-default'" ng-click="lmsPost(['power'])"
@@ -47,8 +47,8 @@
       <input style="margin-bottom:10px;margin-top:0px;" class="clickable" type="range" min="0" max="100" ng-model="volume" ng-mousedown="VolChange=1;" ng-mouseup="lmsPost(['mixer','volume',volume]);VolChange=0;">
     </div>
   </div>
-  <div class="row top-buffer">
-    <div class="col-sm-6">
+  <div class="content-row">
+    <div class="col-50">
       <table class="table table-hover table-condensed">
         <thead>
           <tr>
@@ -95,7 +95,7 @@
         </tdbody>
       </table>
     </div>
-    <div class="col-sm-6">
+    <div class="col-50">
       <div class="panel panel-default">
       <table class="table table-hover table-condensed">
         <thead>
