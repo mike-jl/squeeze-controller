@@ -71,7 +71,7 @@
                   <button class="btn btn-xs" type="button" uib-dropdown-toggle id="{{menuitem.commonParams.album_id}}">
                     <span class="glyphicon glyphicon-option-horizontal gi-v-centered"></span>
                   </button>
-                  <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="{{menuitem.commonParams.album_id}}">
+                  <ul class="dropdown-menu dropdown-menu-right" uib-dropdown-menu role="menu" aria-labelledby="{{menuitem.commonParams.album_id}}">
                     <li ng-repeat="contextItem in contextMenu.item_loop" ng-class="contextItem.action=='none' ? 'disabled' : ''" ng-mousedown="menufunc(contextItem)" role="menuitem">
                       <a href="#/">{{contextItem.text}}</a>
                     </li>
