@@ -7,16 +7,29 @@ require('electron-debug')({enabled: true})
 let win
 
 function createWindow () {
+  var path = require('path')
+  var fs = require('fs')
+  var initPath = path.join(app.getPath('userData'), 'init.json')
+  var data = {}
+  try {
+    data = JSON.parse(fs.readFileSync(initPath, 'utf8'))
+  } catch (err) {
+    data.width = 800
+    data.height = 600
+    data.isMaximized = false
+  }
+
   // Create the browser window.
   win = new BrowserWindow({
     name: 'squeeze-controller',
-    width: 800,
-    height: 600,
+    width: data.width,
+    height: data.height,
     minWidth: 800,
     minHeight: 600,
     toolbar: false
   })
 
+  if (data.isMaximized) win.maximize()
   // Disable menu bar
   // win.setMenu(null)
 
@@ -25,6 +38,13 @@ function createWindow () {
 
   // Uncomment to open the DevTools.
   // win.webContents.openDevTools()
+  win.on('close', () => {
+    var bounds = win.getBounds()
+    var isMaximized = win.isMaximized()
+    var data = {height: bounds.height, width: bounds.width, isMaximized: isMaximized}
+    console.log(data)
+    fs.writeFileSync(initPath, JSON.stringify(data))
+  })
 
   // Emitted when the window is closed.
   win.on('closed', () => {
