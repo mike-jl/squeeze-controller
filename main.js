@@ -13,7 +13,7 @@ function createWindow () {
   var data = {}
   try {
     data = JSON.parse(fs.readFileSync(initPath, 'utf8'))
-  } catch (err) {
+  } catch (e) {
     data.width = 800
     data.height = 600
     data.isMaximized = false

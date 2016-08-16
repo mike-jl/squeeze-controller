@@ -1,5 +1,5 @@
 'use strict'
-var LmsApi = angular.module('LmsApi', ['ngAnimate', 'ui.bootstrap', 'LocalStorageModule', 'ngRoute', 'cfp.hotkeys'])
+var LmsApi = angular.module('LmsApi', ['ngAnimate', 'ui.bootstrap', 'ngRoute', 'cfp.hotkeys'])
 
 LmsApi.config(function ($routeProvider) {
   $routeProvider
@@ -8,24 +8,24 @@ LmsApi.config(function ($routeProvider) {
     .otherwise({ redirectTo: '/' })
 })
 
-LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $timeout, $log, localStorageService, hotkeys) {
+LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $timeout, $log, hotkeys, localStorage) {
   $scope.TrackPosChange = 0
   $scope.VolChange = 0
-  $scope.bubbletips = localStorageService.get('bubbletips')
+  $scope.bubbletips = localStorage.get('bubbletips')
   if ($scope.bubbletips === null) {
     console.log('Settings bubbletips to their default value (true)')
     $scope.bubbletips = true
-    localStorageService.set('bubbletips', true)
+    localStorage.set('bubbletips', true)
   }
-  var storagelmsurl = localStorageService.get('lmsurl')
-  var storagelmsport = localStorageService.get('lmsport')
+  var storagelmsurl = localStorage.get('lmsurl')
+  var storagelmsport = localStorage.get('lmsport')
   // If the url or port settings are undefined; jump directly to the settings
   if (storagelmsurl === null || storagelmsport === null) {
     $location.path('/settings')
   }
   // build the lms url from the settings
   $scope.LmsUrl = 'http://' + storagelmsurl + ':' + storagelmsport + '/'
-  var setPlayer = localStorageService.get('player')
+  var setPlayer = localStorage.get('player')
   // get the players
   $http.post($scope.LmsUrl + 'jsonrpc.js', '{"id":1,"method":"slim.request","params":["-",["players",0,99]]}').then(function (r) {
     $scope.players = r.data.result
@@ -40,10 +40,11 @@ LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $ti
     } else {
       $scope.player = $scope.players.players_loop[0]
     }
+    localStorage.set('player', $scope.player)
+    setPlayer = $scope.player
     poller()
     $scope.getmenu()
   })
-
   var poller = function () {
     $http.post($scope.LmsUrl + 'jsonrpc.js', '{"id":1,"method":"slim.request","params":["' + $scope.player.playerid + '", ["status", "0", 999, "tags:alyK"]]}').then(function (r) {
       $scope.data = r.data.result
@@ -78,15 +79,9 @@ LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $ti
           $scope.trackpos = 0
         }
       }
-      // If a player in the settings is defined and it differs from the current on; set the current one
-      if (setPlayer) {
-        if (setPlayer.playerid !== $scope.player.playerid) {
-          localStorageService.set('player', $scope.player)
-          setPlayer = $scope.player
-        }
-      // If no player is in the settings set the current one
-      } else {
-        localStorageService.set('player', $scope.player)
+      // If the player in the settings differ from the current player, set the current one
+      if (setPlayer.playerid !== $scope.player.playerid) {
+        localStorage.set('player', $scope.player)
         setPlayer = $scope.player
       }
       // Set title for the repeate button
@@ -312,20 +307,61 @@ LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $ti
     })
 })
 
-LmsApi.controller('SettingsCtrl', function ($scope, $log, localStorageService, $route) {
-  $scope.lmsurl = localStorageService.get('lmsurl')
-  $scope.lmsport = localStorageService.get('lmsport')
-  $scope.bubbletips = localStorageService.get('bubbletips')
+LmsApi.controller('SettingsCtrl', function ($scope, $log, localStorage, $route) {
+  $scope.lmsurl = localStorage.get('lmsurl')
+  $scope.lmsport = localStorage.get('lmsport')
+  $scope.bubbletips = localStorage.get('bubbletips')
   $scope.saveSettings = function (settings) {
     for (var key in settings) {
       var value = settings[key]
-      localStorageService.set(key, value)
+      localStorage.set(key, value)
     }
   }
   $scope.clearSettings = function () {
-    localStorageService.clearAll()
+    localStorage.clear()
     $route.reload()
   }
+})
+LmsApi.factory('localStorage', function ($window) {
+  var factory = {}
+  factory.get = function (key) {
+    var item = $window.localStorage.getItem(key)
+    try {
+      return angular.fromJson(item)
+    } catch (e) {
+      return
+    }
+  }
+  factory.set = function (key, value) {
+    $window.localStorage.setItem(key, angular.toJson(value))
+    return
+  }
+  factory.clear = function () {
+    $window.localStorage.clear()
+    return
+  }
+  return factory
+})
+
+LmsApi.factory('sessionStorage', function ($window) {
+  var factory = {}
+  factory.get = function (key) {
+    var item = $window.sessionStorage.getItem(key)
+    try {
+      return angular.fromJson(item)
+    } catch (e) {
+      return
+    }
+  }
+  factory.set = function (key, value) {
+    $window.sessionStorage.setItem(key, angular.toJson(value))
+    return
+  }
+  factory.clear = function () {
+    $window.sessionStorage.clear()
+    return
+  }
+  return factory
 })
 
 LmsApi.filter('menu_filter', ['$filter', function ($filter) {
