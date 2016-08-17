@@ -322,6 +322,7 @@ LmsApi.controller('SettingsCtrl', function ($scope, $log, localStorage, $route) 
     $route.reload()
   }
 })
+
 LmsApi.factory('localStorage', function ($window) {
   var factory = {}
   factory.get = function (key) {
@@ -398,7 +399,16 @@ LmsApi.factory('authFactory', function ($injector, base64, localStorage) {
   factory.getUrl = function () {
     return url__
   }
+  factory.reloadUrl = function () {
+    url__ = localStorage.get('lmsurl') + ':' + localStorage.get('lmsport')
+  }
   return factory
+})
+
+LmsApi.run(function ($rootScope, authFactory) {
+  $rootScope.$on('$routeChangeStart', function (event, next, current) {
+    authFactory.reloadUrl()
+  })
 })
 
 LmsApi.config(function ($httpProvider) {
