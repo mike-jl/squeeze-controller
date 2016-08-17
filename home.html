@@ -1,7 +1,7 @@
 <div class="wrapper" ng-controller="LmsApiCtrl">
   <div class="header-row">
     <div class="col-25">
-      <img class="img-cover" ng-if="CoverUrl" ng-src="{{CoverUrl}}"></img>
+      <img class="img-cover" ng-if="CoverUrl" http-src="{{CoverUrl}}"></img>
     </div>
     <div class="col-50">
       <div class="title-style" ng-style="{'visibility':(data.playlist_cur_index | typeof)!='undefined'?'visible':'hidden'}">

@@ -42,7 +42,6 @@ function createWindow () {
     var bounds = win.getBounds()
     var isMaximized = win.isMaximized()
     var data = {height: bounds.height, width: bounds.width, isMaximized: isMaximized}
-    console.log(data)
     fs.writeFileSync(initPath, JSON.stringify(data))
   })
 

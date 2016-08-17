@@ -1,5 +1,5 @@
 'use strict'
-var LmsApi = angular.module('LmsApi', ['ngAnimate', 'ui.bootstrap', 'ngRoute', 'cfp.hotkeys'])
+var LmsApi = angular.module('LmsApi', ['ngAnimate', 'ui.bootstrap', 'ngRoute', 'cfp.hotkeys', 'utf8-base64', 'angular.img'])
 
 LmsApi.config(function ($routeProvider) {
   $routeProvider
@@ -340,28 +340,87 @@ LmsApi.factory('localStorage', function ($window) {
     $window.localStorage.clear()
     return
   }
+  factory.remove = function (key) {
+    $window.localStorage.removeItem(key)
+    return
+  }
   return factory
 })
 
-LmsApi.factory('sessionStorage', function ($window) {
+LmsApi.factory('authFactory', function ($injector, base64, localStorage) {
+  var auth__ = localStorage.get('auth')
+  var url__ = localStorage.get('lmsurl') + ':' + localStorage.get('lmsport')
   var factory = {}
-  factory.get = function (key) {
-    var item = $window.sessionStorage.getItem(key)
-    try {
-      return angular.fromJson(item)
-    } catch (e) {
-      return
-    }
+  factory.set = function (key) {
+    var $uibModal = $injector.get('$uibModal')
+    var modal = $uibModal.open({
+      template: '<div class="modal-header">' +
+                ' <h3 class="modal-title">Login required</h3>' +
+                '</div>' +
+                '<form ng-submit="search(menuitem,searchInput)">' +
+                '<div class="modal-body">' +
+                '  <div class="form-group">' +
+                '    <label for="usr">User:</label>' +
+                '    <input id="usr" type="text" ng-model="user" class="form-control" autofocus>' +
+                '  </div>' +
+                '  <div class="form-group">' +
+                '    <label for="password">Password:</label>' +
+                '    <input id="password" type="password" ng-model="pwd" class="form-control">' +
+                '  </div>' +
+                '  <div class="checkbox">' +
+                '    <label><input type="checkbox" ng-model="save" value="">Remember me</label>' +
+                '  </div>' +
+                '</div>' +
+                '<div class="modal-footer">' +
+                '  <button class="btn btn-default" ng-click="submit([user, pwd, save])" type="button submit">' +
+                '    Submit' +
+                '  </button>' +
+                '</div>' +
+                '</form>',
+      controller: function ($scope, $uibModalInstance) {
+        $scope.submit = function (auth) {
+          $uibModalInstance.close(auth)
+        }
+      }
+    })
+    return modal.result.then(function (auth) {
+      auth__ = base64.encode(auth[0] + ':' + auth[1])
+      if (auth[2] === true) {
+        localStorage.set('auth', auth__)
+      } else {
+        localStorage.remove('auth')
+      }
+    })
   }
-  factory.set = function (key, value) {
-    $window.sessionStorage.setItem(key, angular.toJson(value))
-    return
+  factory.get = function () {
+    return auth__
   }
-  factory.clear = function () {
-    $window.sessionStorage.clear()
-    return
+  factory.getUrl = function () {
+    return url__
   }
   return factory
+})
+
+LmsApi.config(function ($httpProvider) {
+  $httpProvider.interceptors.push(function ($q, $injector, authFactory) {
+    return {
+      request: function (request) {
+        var auth = authFactory.get()
+        if (typeof auth !== 'undefined' && request.url.indexOf(authFactory.getUrl()) !== -1) {
+          request.headers.authorization = 'Basic ' + auth
+        }
+        return request
+      },
+      responseError: function (rejection) {
+        if (rejection.status === 401 && rejection.config.url.indexOf(authFactory.getUrl()) !== -1) {
+          return authFactory.set().then(function () {
+            return $injector.get('$http')(rejection.config)
+          })
+        }
+        return $q.reject(rejection)
+      }
+    }
+  })
 })
 
 LmsApi.filter('menu_filter', ['$filter', function ($filter) {
