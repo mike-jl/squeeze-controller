@@ -97,7 +97,8 @@
       <div class="text-center">
         <ul ng-show="(menu.count / maxitems) > 1 && !filterisEnable"
         uib-pagination ng-change="pagefunc()" total-items="menu.count" items-per-page="maxitems" ng-model="menuPage"
-        max-size="4" force-ellipses="true" class="pagination pagination-sm" boundary-links="true"></ul>
+        max-size="4" force-ellipses="true" class="pagination pagination-sm" boundary-links="true"
+        previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"></ul>
       </div>
     </div>
     <div class="col-50 scroll">
