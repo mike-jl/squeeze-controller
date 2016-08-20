@@ -7,10 +7,14 @@
     <label for="lmsport">LMS Port:</label>
     <input ng-model="lmsport" type="text" class="form-control" id="lmsport">
   </div>
+  <div class="form-group">
+    <label for="maxitems">Items per page:</label>
+    <input ng-model="maxitems" type="number" class="form-control" id="maxitems">
+  </div>
   <div class="checkbox">
     <label><input type="checkbox" ng-model="bubbletips">Enable Bubble-Tips in the menu</label>
   </div>
-  <button ng-mousedown="saveSettings({lmsurl:lmsurl,lmsport:lmsport,bubbletips:bubbletips})" type="button" class="btn btn-success pull-right">
+  <button ng-mousedown="saveSettings({lmsurl:lmsurl,lmsport:lmsport,bubbletips:bubbletips,maxitems:maxitems})" type="button" class="btn btn-success pull-right">
     <span class="glyphicon glyphicon-floppy-disk"></span>
     Save
   </button><br><br>

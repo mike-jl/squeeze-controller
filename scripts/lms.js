@@ -332,6 +332,7 @@ LmsApi.controller('SettingsCtrl', function ($scope, $log, localStorage, $route) 
   $scope.lmsurl = localStorage.get('lmsurl')
   $scope.lmsport = localStorage.get('lmsport')
   $scope.bubbletips = localStorage.get('bubbletips')
+  $scope.maxitems = localStorage.get('maxitems')
   $scope.saveSettings = function (settings) {
     for (var key in settings) {
       var value = settings[key]
