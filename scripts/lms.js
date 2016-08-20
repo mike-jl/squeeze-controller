@@ -11,6 +11,12 @@ LmsApi.config(function ($routeProvider) {
 LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $timeout, $log, hotkeys, localStorage) {
   $scope.TrackPosChange = 0
   $scope.VolChange = 0
+  $scope.maxitems = localStorage.get('maxitems')
+  if ($scope.maxitems === null) {
+    console.log('Settings maxitems to their default value (50)')
+    $scope.maxitems = 50
+    localStorage.set('maxitems', 50)
+  }
   $scope.bubbletips = localStorage.get('bubbletips')
   if ($scope.bubbletips === null) {
     console.log('Settings bubbletips to their default value (true)')
@@ -103,7 +109,8 @@ LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $ti
       $timeout(poller, 500)
     })
   }
-  $scope.lmsPost = function (params, menuparams) {
+
+  $scope.lmsPost = function (params, menuparams, page) {
     console.log('lmsPost: ' + params)
     return $http.post($scope.LmsUrl + 'jsonrpc.js', '{"id":1,"method":"slim.request","params":["' + $scope.player.playerid + '",' + angular.toJson(params) + ']}').then(function (r) {
       if (menuparams) {
@@ -113,11 +120,15 @@ LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $ti
           } else {
             $scope.baseactions = 0
           }
+          $scope.menuPage = 1
           $scope.menu = r.data.result
           $scope.filterisEnable = menuparams[1]
           $scope.orderby = menuparams[2]
-          $scope.breadCrumbs.push([menuparams[3], $scope.filterisEnable, $scope.orderby, $scope.baseactions, $scope.menu])
+          $scope.breadCrumbs.push([menuparams[3], $scope.filterisEnable, $scope.orderby, $scope.baseactions, $scope.menu, params])
+          $scope.lastParams = params
         }
+      } else if (page) {
+        $scope.menu = r.data.result
       }
       return r.data.result
     })
@@ -125,6 +136,7 @@ LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $ti
   // function for getting the main menu and setting all the required vars
   $scope.getmenu = function () {
     $scope.lmsPost(['menu', 0, 100, 'direct:1']).then(function (r) {
+      $scope.menuPage = 1
       $scope.filterisEnable = true
       $scope.nodefilter = 'home'
       $scope.menu = r
@@ -160,7 +172,7 @@ LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $ti
           params.push(value)
         }
         if (menuChange) {
-          params.push(0, 100)
+          params.push(0, $scope.maxitems)
         }
         for (key in item.actions.go.params) {
           value = item.actions.go.params[key]
@@ -206,7 +218,7 @@ LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $ti
       params.push(value)
     }
     if (menuChange) {
-      params.push(0, 100)
+      params.push(0, $scope.maxitems)
     }
     for (key in $scope.baseactions[action].params) {
       value = $scope.baseactions[action].params[key]
@@ -241,7 +253,7 @@ LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $ti
       value = item.actions.go.cmd[key]
       params.push(value)
     }
-    params.push(0, 100)
+    params.push(0, $scope.maxitems)
     for (key in item.actions.go.params) {
       value = item.actions.go.params[key]
       if (value === '__TAGGEDINPUT__') {
@@ -254,11 +266,20 @@ LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $ti
   }
 
   $scope.breadCrumbfunc = function (index) {
+    $scope.menuPage = 1
     $scope.filterisEnable = $scope.breadCrumbs[index][1]
     $scope.orderby = $scope.breadCrumbs[index][2]
     $scope.baseactions = $scope.breadCrumbs[index][3]
     $scope.menu = $scope.breadCrumbs[index][4]
+    $scope.lastParams = $scope.breadCrumbs[index][5]
     $scope.breadCrumbs.splice(index + 1, 99)
+  }
+
+  $scope.pagefunc = function ($event) {
+    var params = $scope.lastParams
+    params[2] = ($scope.menuPage - 1) * $scope.maxitems
+    params[3] = params[2] + $scope.maxitems
+    $scope.lmsPost(params, false, true)
   }
 
   // prevent default action of arrow and space keys; only in document.body (so they still work in an imput field)

@@ -53,8 +53,8 @@
         <thead>
           <tr>
             <th>
-              <b class="clickable" ng-mousedown="getmenu()">Home</b>
-              <b class="clickable" ng-repeat="breadCrumb in breadCrumbs track by $index" ng-mousedown="breadCrumbfunc($index)">
+              <b class="clickable" ng-click="getmenu()">Home</b>
+              <b class="clickable" ng-repeat="breadCrumb in breadCrumbs track by $index" ng-click="breadCrumbfunc($index)">
                 <span class="glyphicon glyphicon-menu-right"></span>
                 {{breadCrumb[0].text}}
               </b>
@@ -94,6 +94,11 @@
           </tr>
         </tdbody>
       </table>
+      <div class="text-center">
+        <ul ng-show="(menu.count / maxitems) > 1 && !filterisEnable"
+        uib-pagination ng-change="pagefunc()" total-items="menu.count" items-per-page="maxitems" ng-model="menuPage"
+        max-size="4" force-ellipses="true" class="pagination pagination-sm" boundary-links="true"></ul>
+      </div>
     </div>
     <div class="col-50 scroll">
       <div class="panel panel-default">
