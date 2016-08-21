@@ -13,13 +13,25 @@ LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $ti
   $scope.VolChange = 0
   $scope.maxitems = localStorage.get('maxitems')
   if ($scope.maxitems === null) {
-    console.log('Settings maxitems to their default value (50)')
+    console.log('Setting maxitems to their default value (50)')
     $scope.maxitems = 50
     localStorage.set('maxitems', 50)
   }
+  $scope.menuArtwork = localStorage.get('menuArtwork')
+  if ($scope.menuArtwork === null) {
+    console.log('Setting menuArtwork to their default value (true)')
+    $scope.maxitems = true
+    localStorage.set('menuArtwork', true)
+  }
+  $scope.playlistArtwork = localStorage.get('playlistArtwork')
+  if ($scope.playlistArtwork === null) {
+    console.log('Setting playlistArtwork to their default value (true)')
+    $scope.maxitems = true
+    localStorage.set('playlistArtwork', true)
+  }
   $scope.bubbletips = localStorage.get('bubbletips')
   if ($scope.bubbletips === null) {
-    console.log('Settings bubbletips to their default value (true)')
+    console.log('Setting bubbletips to their default value (true)')
     $scope.bubbletips = true
     localStorage.set('bubbletips', true)
   }
@@ -51,6 +63,7 @@ LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $ti
     poller()
     $scope.getmenu()
   })
+
   var poller = function () {
     $http.post($scope.LmsUrl + 'jsonrpc.js', '{"id":1,"method":"slim.request","params":["' + $scope.player.playerid + '", ["status", "0", 999, "tags:alyK"]]}').then(function (r) {
       $scope.data = r.data.result
@@ -64,7 +77,7 @@ LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $ti
             $scope.CoverUrl = $scope.data.playlist_loop[$scope.data.playlist_cur_index].artwork_url
           } else {
             // we can define the size for the cover by adding '_200x200_p' befor the extension
-            $scope.CoverUrl = $scope.LmsUrl + $scope.data.playlist_loop[$scope.data.playlist_cur_index].artwork_url
+            $scope.CoverUrl = $scope.LmsUrl + $scope.data.playlist_loop[$scope.data.playlist_cur_index].artwork_url.replace(/^\//, '')
             $scope.CoverUrl = $scope.CoverUrl.replace(/(\.[\w\d_-]+)$/i, '_200x200_p$1')
           }
         } else {
@@ -72,6 +85,10 @@ LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $ti
         }
       } else {
         $scope.CoverUrl = $scope.LmsUrl + 'music/0/cover_200x200_p.png'
+      }
+      // Only refresh playlist if something changed to prevent flicker
+      if (!angular.equals($scope.playlist, $scope.data.playlist_loop)) {
+        $scope.playlist = $scope.data.playlist_loop
       }
       // Don't set the volume while changing it
       if ($scope.VolChange === 0) {
@@ -162,6 +179,7 @@ LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $ti
         console.log('Action: go; without baseaction')
         var menuChange = true
         if (item.actions.go.nextWindow === 'parentNoRefresh' ||
+            item.actions.go.nextWindow === 'parent' ||
             item.actions.go.nextWindow === 'nowPlaying') {
           menuChange = false
         }
@@ -193,7 +211,7 @@ LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $ti
       if (item.goAction) {
         action = item.goAction
       }
-      console.log('Action: ' + action + '; wit baseaction')
+      console.log('Action: ' + action + '; with baseaction')
       if ($scope.baseactions === 0) {
         console.error('something went horribly wrong..')
         return
@@ -265,6 +283,36 @@ LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $ti
     $scope.lmsPost(params, [true, false, '$index', item])
   }
 
+  $scope.iconUrl = function (item) {
+    if (item.artwork_url) {
+      if (item.artwork_url.startsWith('http')) {
+        return item.artwork_url
+      } else {
+        return $scope.LmsUrl + item.artwork_url.replace(/^\//, '').replace(/(\.[\w\d_-]+)$/i, '_200x200_p$1')
+      }
+    } else {
+      if (item.id) {
+        return $scope.LmsUrl + 'music/' + item.id + '/cover_80x80_p'
+      } else {
+        if (item.icon) {
+          if (item.icon.startsWith('http')) {
+            return item.icon
+          } else {
+            var iconrep = item.icon.replace(/(\.[\w\d_-]+)$/i, '_200x200_p$1')
+            if (item.icon === iconrep) {
+              iconrep = item.icon + '_80x80_p'
+            }
+            return $scope.LmsUrl + iconrep
+          }
+        } else if (item.commonParams.track_id) {
+          return $scope.LmsUrl + 'music/' + item.commonParams.track_id + '/cover_80x80_p'
+        } else {
+          return
+        }
+      }
+    }
+  }
+
   $scope.breadCrumbfunc = function (index) {
     $scope.menuPage = 1
     $scope.filterisEnable = $scope.breadCrumbs[index][1]
@@ -275,10 +323,9 @@ LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $ti
     $scope.breadCrumbs.splice(index + 1, 99)
   }
 
-  $scope.pagefunc = function ($event) {
+  $scope.pagefunc = function () {
     var params = $scope.lastParams
     params[2] = ($scope.menuPage - 1) * $scope.maxitems
-    params[3] = params[2] + $scope.maxitems
     $scope.lmsPost(params, false, true)
   }
 
@@ -328,11 +375,13 @@ LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $ti
     })
 })
 
-LmsApi.controller('SettingsCtrl', function ($scope, $log, localStorage, $route) {
+LmsApi.controller('SettingsCtrl', function ($scope, $log, localStorage, $location) {
   $scope.lmsurl = localStorage.get('lmsurl')
   $scope.lmsport = localStorage.get('lmsport')
   $scope.bubbletips = localStorage.get('bubbletips')
   $scope.maxitems = localStorage.get('maxitems')
+  $scope.menuArtwork = localStorage.get('menuArtwork')
+  $scope.playlistArtwork = localStorage.get('playlistArtwork')
   $scope.saveSettings = function (settings) {
     for (var key in settings) {
       var value = settings[key]
@@ -341,7 +390,7 @@ LmsApi.controller('SettingsCtrl', function ($scope, $log, localStorage, $route) 
   }
   $scope.clearSettings = function () {
     localStorage.clear()
-    $route.reload()
+    $location.url('/')
   }
 })
 

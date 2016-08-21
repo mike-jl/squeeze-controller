@@ -59,11 +59,17 @@ body {
 .title-style {
   font-size: 160%;
   text-align: center;
+  white-space: nowrap;
+  overflow:hidden !important;
+  text-overflow: ellipsis;
 }
 
 .artist-album-style {
   font-size: 120%;
   text-align: center;
+  white-space: nowrap;
+  overflow:hidden !important;
+  text-overflow: ellipsis;
 }
 
 .label-gi-btn {
