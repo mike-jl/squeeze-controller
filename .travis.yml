@@ -1,6 +1,9 @@
 language: node_js
 node_js: node
 addons:
+  apt:
+    packages:
+      - wine
 install:
   - npm install
   - npm install electron-packager -g
