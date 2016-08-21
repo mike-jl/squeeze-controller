@@ -1,11 +1,10 @@
-sudo: required
-dist: trusty
 language: node_js
 node_js: node
-addons:
-  apt:
-    packages:
-      - wine1.6
+sudo: required
+dist: trusty
+before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get install -y wine1.6
 install:
   - npm install
   - npm install electron-packager -g
