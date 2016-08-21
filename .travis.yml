@@ -5,7 +5,7 @@ node_js: node
 addons:
   apt:
     packages:
-      - wine
+      - wine1.6
 install:
   - npm install
   - npm install electron-packager -g
