@@ -2,9 +2,10 @@ sudo: required
 dist: trusty
 language: node_js
 node_js: node
-before-install:
-  - sudo apt-get -qq update
-  - sudo apt-get install -y wine1.6
+addons:
+  apt:
+    packages:
+      - wine
 install:
   - npm install
   - npm install electron-packager -g
