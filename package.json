@@ -1,7 +1,7 @@
 {
   "name": "squeeze-controller",
   "productName": "Squeeze Controller",
-  "version": "0.1.0-alpha.5",
+  "version": "0.1.0-alpha.6",
   "main": "main.js",
   "license": "MIT",
   "repository": "michiil/squeeze-controller",
@@ -19,7 +19,6 @@
     "angular": "^1.5.8",
     "angular-animate": "^1.5.7",
     "angular-hotkeys": "^1.7.0",
-    "angular-img-http-src": "^1.0.1",
     "angular-route": "^1.5.8",
     "angular-ui-bootstrap": "^2.0.1",
     "angular-utf8-base64": "0.0.5",
