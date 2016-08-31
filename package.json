@@ -18,6 +18,7 @@
   "dependencies": {
     "angular": "^1.5.8",
     "angular-animate": "^1.5.7",
+    "angular-drag-and-drop-lists": "^1.4.0",
     "angular-hotkeys": "^1.7.0",
     "angular-route": "^1.5.8",
     "angular-ui-bootstrap": "^2.0.1",

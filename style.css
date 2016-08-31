@@ -14,10 +14,21 @@ body {
   flex:0 0 240px;
   display: flex;
 }
+.content-header-row {
+  flex:none;
+  display: flex;
+}
 .content-row {
   flex:1 0 0;
   display: flex;
 }
+
+.content-header-col-50 {
+  overflow-y: auto;
+  flex :0 0 50%;
+  padding: 0px 15px;
+}
+
 .col-50 {
   overflow-y: auto;
   flex :0 0 50%;
@@ -48,6 +59,24 @@ body {
     width: 300px;
     white-space: nowrap;
     overflow: hidden;
+}
+
+.list-group-item {
+  padding: 5px !important;
+}
+
+.nowrap {
+  white-space: nowrap;
+}
+
+.dndDraggingSource {
+    display: none;
+}
+
+.dndPlaceholder {
+    display: block;
+    background-color: #ddd;
+    min-height: 80px;
 }
 
 .control-button-container {

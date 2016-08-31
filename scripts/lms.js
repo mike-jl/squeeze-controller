@@ -1,5 +1,5 @@
 'use strict'
-var LmsApi = angular.module('LmsApi', ['ngAnimate', 'ui.bootstrap', 'ngRoute', 'cfp.hotkeys', 'utf8-base64', 'angular.img'])
+var LmsApi = angular.module('LmsApi', ['ngAnimate', 'ui.bootstrap', 'ngRoute', 'cfp.hotkeys', 'utf8-base64', 'angular.img', 'dndLists'])
 
 LmsApi.config(function ($routeProvider) {
   $routeProvider
@@ -89,6 +89,7 @@ LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $ti
       // Only refresh playlist if something changed to prevent flicker
       if (!angular.equals($scope.playlist, $scope.data.playlist_loop)) {
         $scope.playlist = $scope.data.playlist_loop
+        console.log('update playlist')
       }
       // Don't set the volume while changing it
       if ($scope.VolChange === 0) {
@@ -304,7 +305,7 @@ LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $ti
             }
             return $scope.LmsUrl + iconrep
           }
-        } else if (item.commonParams.track_id) {
+        } else if (item.commonParams && item.commonParams.track_id) {
           return $scope.LmsUrl + 'music/' + item.commonParams.track_id + '/cover_80x80_p'
         } else {
           return
@@ -327,6 +328,21 @@ LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $ti
     var params = $scope.lastParams
     params[2] = ($scope.menuPage - 1) * $scope.maxitems
     $scope.lmsPost(params, false, true)
+  }
+
+  $scope.dndPlaylistMove = function (item, to) {
+    var __to
+    if (item['playlist index'] < to) {
+      __to = to - 1
+    } else {
+      __to = to
+    }
+    if (item['playlist index'] !== __to) {
+      $scope.lmsPost(['playlist', 'move', item['playlist index'], __to])
+      $scope.playlist.splice(item['playlist index'], 1)
+      $scope.playlist.splice(__to, 0, item)
+    }
+    return true
   }
 
   // prevent default action of arrow and space keys; only in document.body (so they still work in an imput field)
