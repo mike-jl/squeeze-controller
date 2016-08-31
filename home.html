@@ -16,7 +16,7 @@
       <div class="control-button-container">
         <span class="glyphicon glyphicon-step-backward clickable control-button" ng-click="lmsPost(['button','jump_rew']);"></span>
         <span ng-class="data.mode != 'play' ? 'glyphicon glyphicon-play clickable control-button' : 'glyphicon glyphicon-pause clickable control-button';" ng-click="lmsPost(['pause']);"></span>
-        <span class="glyphicon glyphicon-step-forward clickable control-button" ng-clich="lmsPost(['button','jump_fwd']);"></span>
+        <span class="glyphicon glyphicon-step-forward clickable control-button" ng-click="lmsPost(['button','jump_fwd']);"></span>
       </div>
       <input style="margin-bottom:10px;margin-top:0px;" class="clickable" type="range" min="0" max="{{data.duration ? data.duration : 0}}" ng-model="trackpos" ng-mousedown="TrackPosChange=1;" ng-mouseup="lmsPost(['time',trackpos]);TrackPosChange=0;">
       <p style="text-align:left;">
