@@ -165,48 +165,47 @@ LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $ti
   }
   // function to handle navigation in the menu
   $scope.menufunc = function (item) {
-    console.log(item)
+    console.log(angular.toJson(item))
     var params = []
     if (item.action === 'none') {
       return
     }
-    if (item.actions) {
-      if (item.actions.do) {
-        console.log('Action: do; without baseaction')
-        params.push.apply(params, item.actions.do.cmd)
-        $scope.lmsPost(params)
-        $timeout($scope.getmenu, 600)
-      } else if (item.actions.go) {
-        console.log('Action: go; without baseaction')
-        var menuChange = true
-        if (item.actions.go.nextWindow === 'parentNoRefresh' ||
-            item.actions.go.nextWindow === 'parent' ||
-            item.actions.go.nextWindow === 'nowPlaying') {
-          menuChange = false
-        }
-        var key
-        var value
-        for (key in item.actions.go.cmd) {
-          value = item.actions.go.cmd[key]
-          params.push(value)
-        }
-        if (menuChange) {
-          params.push(0, $scope.maxitems)
-        }
-        for (key in item.actions.go.params) {
-          value = item.actions.go.params[key]
-          if (key === 'search') {
-            console.log('this is a search item, use the search input')
-            return
-          }
-          params.push(key + ':' + value)
-        }
-        params.push('useContextMenu:1')
-        $scope.lmsPost(params, [menuChange, false, '$index', item])
-      }
-    } else if (item.isANode) {
+    if (item.isANode) {
+      console.log('Node')
       $scope.nodefilter = item.id
       $scope.breadCrumbs.push([item, $scope.filterisEnable, $scope.orderby, $scope.baseactions, $scope.menu])
+    } else if (item.actions && item.actions.do) {
+      console.log('Action: do; without baseaction')
+      params.push.apply(params, item.actions.do.cmd)
+      $scope.lmsPost(params)
+      $timeout($scope.getmenu, 600)
+    } else if (item.actions && item.actions.go) {
+      console.log('Action: go; without baseaction')
+      var menuChange = true
+      if (item.actions.go.nextWindow === 'parentNoRefresh' ||
+          item.actions.go.nextWindow === 'parent' ||
+          item.actions.go.nextWindow === 'nowPlaying') {
+        menuChange = false
+      }
+      var key
+      var value
+      for (key in item.actions.go.cmd) {
+        value = item.actions.go.cmd[key]
+        params.push(value)
+      }
+      if (menuChange) {
+        params.push(0, $scope.maxitems)
+      }
+      for (key in item.actions.go.params) {
+        value = item.actions.go.params[key]
+        if (key === 'search') {
+          console.log('this is a search item, use the search input')
+          return
+        }
+        params.push(key + ':' + value)
+      }
+      params.push('useContextMenu:1')
+      $scope.lmsPost(params, [menuChange, false, '$index', item])
     } else {
       var action = 'go'
       if (item.goAction) {
