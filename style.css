@@ -1,5 +1,6 @@
 body {
   padding-bottom: 35px;
+  -webkit-user-select: none; 
 }
 
 .wrapper, html, body {
