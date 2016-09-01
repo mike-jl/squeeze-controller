@@ -329,7 +329,12 @@ LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $ti
     $scope.lmsPost(params, false, true)
   }
 
-  $scope.dndPlaylistMove = function (item, to) {
+  $scope.dndPlaylistMove = function (type, item, to) {
+    console.log(type)
+    console.log(item)
+    console.log(to)
+    console.log($scope.baseactions)
+    return true
     var __to
     if (item['playlist index'] < to) {
       __to = to - 1

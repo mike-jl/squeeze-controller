@@ -1,6 +1,6 @@
 body {
   padding-bottom: 35px;
-  -webkit-user-select: none; 
+  -webkit-user-select: none;
 }
 
 .wrapper, html, body {
@@ -70,7 +70,7 @@ body {
   white-space: nowrap;
 }
 
-.dndDraggingSource {
+.playlist.dndDraggingSource {
     display: none;
 }
 

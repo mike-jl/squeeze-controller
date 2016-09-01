@@ -70,10 +70,14 @@
   </div>
   <div class="content-row">
     <div class="content-header-col-50 scroll">
-      <ul class="list-group">
+      <ul class="list-group" dnd-list="menu.item_loop" dnd-allowed-types="[null]">
         <li ng-if="menu"
             class="list-group-item"
-            ng-repeat="menuitem in menu.item_loop | menu_filter:'node':nodefilter:filterisEnable | orderBy:orderby">
+            ng-repeat="menuitem in menu.item_loop | menu_filter:'node':nodefilter:filterisEnable | orderBy:orderby"
+            dnd-draggable="menuitem"
+            dnd-effect-allowed="copy"
+            dnd-disable-if="!menuitem.params.isContextMenu && menuitem.type !== 'playlist' && menuitem.type !== 'audio'"
+            dnd-type="'menu'">
           <div class="btn-group vert-align pull-right" uib-dropdown on-toggle="open ? submenu(menuitem,'more',1) : ddClose()"
                ng-if="menuitem.params.isContextMenu || menuitem.type == 'playlist' || menuitem.type == 'audio'" class="menu-float-right text-nowrap">
             <button class="btn btn-xs" type="button" uib-dropdown-toggle id="{{menuitem.commonParams.album_id}}">
@@ -114,12 +118,13 @@
       </div>
     </div>
     <div class="content-header-col-50 scroll">
-      <ul class="list-group" dnd-list="playlist" dnd-drop="dndPlaylistMove(item, index)">
-        <li ng-class="title['playlist index'] == data.playlist_cur_index ? 'active' : ''" class="list-group-item clickable"
+      <ul class="list-group" dnd-list="playlist" dnd-drop="dndPlaylistMove(type, item, index)">
+        <li ng-class="title['playlist index'] == data.playlist_cur_index ? 'active' : ''" class="list-group-item clickable playlist"
             ng-if="data.playlist_tracks !== 0"
             ng-repeat="title in playlist track by title.id"
             dnd-draggable="title"
-            dnd-effect-allowed="move">
+            dnd-effect-allowed="move"
+            dnd-type="'playlist'">
           <button style="float:right;" class="btn btn-sm btn-warning" ng-click="lmsPost(['playlist','delete',title['playlist index']]);">
             <span class="glyphicon glyphicon-trash gi-v-centered"></span>
           </button>
