@@ -216,17 +216,16 @@ LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $ti
         console.error('something went horribly wrong..')
         return
       }
-      var retparams = $scope.submenu(item, action, 0)
-      params = retparams[0]
-      menuChange = retparams[1]
-      $scope.lmsPost(params, [menuChange, false, '$index', item])
+      params = $scope.submenu(item, action, 0)
+      $scope.lmsPost(params[0], [params[1], false, '$index', item])
     }
   }
-  $scope.submenu = function (menuitem, action, context) {
+  $scope.submenu = function (menuitem, action, context, nomenuChange) {
     var params = []
     var menuChange = true
     if ($scope.baseactions[action].nextWindow === 'parentNoRefresh' ||
-        $scope.baseactions[action].nextWindow === 'nowPlaying') {
+        $scope.baseactions[action].nextWindow === 'nowPlaying' ||
+        nomenuChange === true) {
       menuChange = false
     }
     var key
@@ -334,17 +333,23 @@ LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $ti
     console.log(item)
     console.log(to)
     console.log($scope.baseactions)
-    return true
-    var __to
-    if (item['playlist index'] < to) {
-      __to = to - 1
-    } else {
-      __to = to
-    }
-    if (item['playlist index'] !== __to) {
-      $scope.lmsPost(['playlist', 'move', item['playlist index'], __to])
-      $scope.playlist.splice(item['playlist index'], 1)
-      $scope.playlist.splice(__to, 0, item)
+    if (type === 'playlist') {
+      // If we move a Item down we need correct the index bacause the item we are moving isen't there anymore..
+      var __to
+      if (item['playlist index'] < to) {
+        __to = to - 1
+      } else {
+        __to = to
+      }
+      // Check if the Position even differs form the current position, so we don't move when it's not nessecary
+      if (item['playlist index'] !== __to) {
+        $scope.lmsPost(['playlist', 'move', item['playlist index'], __to])
+        $scope.playlist.splice(item['playlist index'], 1)
+        $scope.playlist.splice(__to, 0, item)
+      }
+    } else if (type === 'menu') {
+      var params = $scope.submenu(item, 'add-hold', 0, true)
+      $scope.lmsPost(params[0])
     }
     return true
   }
