@@ -329,10 +329,6 @@ LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $ti
   }
 
   $scope.dndPlaylistMove = function (type, item, to) {
-    console.log(type)
-    console.log(item)
-    console.log(to)
-    console.log($scope.baseactions)
     if (type === 'playlist') {
       // If we move a Item down we need correct the index bacause the item we are moving isen't there anymore..
       var __to
