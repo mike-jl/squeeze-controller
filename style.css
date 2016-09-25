@@ -1,9 +1,13 @@
 body {
+  /*Change font for whole document*/
   font-family: 'Open Sans', sans-serif;
+  /*Add padding on the bottom for the navbar*/
   padding-bottom: 35px;
+  /*Disalow to select text*/
   -webkit-user-select: none;
 }
 
+/*Start of flexbox*/
 .wrapper, html, body {
   height:100%;
   margin:0;
@@ -24,13 +28,11 @@ body {
   flex:1 0 0;
   display: flex;
 }
-
 .content-header-col-50 {
   overflow-y: auto;
   flex :0 0 50%;
   padding: 0px 15px;
 }
-
 .col-50 {
   overflow-y: auto;
   flex :0 0 50%;
@@ -41,7 +43,9 @@ body {
   flex :0 0 25%;
   padding: 15px;
 }
+/*End of flexbox*/
 
+/*Styling for the cover img*/
 .img-cover {
   padding: 5px;
   height: 180px;
@@ -49,44 +53,56 @@ body {
   margin: auto;
 }
 
+/*Custom scrollbar*/
 .scroll::-webkit-scrollbar {
   width: 5px;
 }
-
 .scroll::-webkit-scrollbar-thumb {
   background: #666;
 }
 
+/*define the width of the dropdown and hide the overflow*/
 .dropdown-menu {
-    width: 300px;
-    white-space: nowrap;
-    overflow: hidden;
+  width: 300px;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
+/*padding for menu and playlist items*/
 .list-group-item {
-  padding: 5px !important;
+  padding: 5px;
 }
 
+/*custom class for text that souldn't wrap to the next line*/
 .nowrap {
   white-space: nowrap;
 }
 
+/*hide the dnd item in the playlist (only in the playlist, in the menu do nothing)*/
 .playlist.dndDraggingSource {
-    display: none;
+  display: none;
 }
 
+/*placeholde for the dnd item before dropping*/
 .dndPlaceholder {
-    display: block;
-    background-color: #ddd;
-    min-height: 80px;
+  display: block;
+  background-color: #ddd;
+  min-height: 30px;
 }
 
+/*container for the prev,play/pause,next buttons*/
 .control-button-container {
   margin-top: 25px;
   margin-bottom: 25px;
   text-align: center;
 }
+/*prev,play/pause,next buttons*/
+.control-button {
+  margin: 0px 35px;
+  font-size: 2em;
+}
 
+/*Styling for the title line*/
 .title-style {
   font-size: 160%;
   text-align: center;
@@ -95,6 +111,7 @@ body {
   text-overflow: ellipsis;
 }
 
+/*Styling for the artist and now playing line*/
 .artist-album-style {
   font-size: 120%;
   text-align: center;
@@ -103,6 +120,7 @@ body {
   text-overflow: ellipsis;
 }
 
+/*button lables with glyphicons (used in the repeat and shuffle buttons)*/
 .label-gi-btn {
   position:absolute;
   font-size: 0.7em;
@@ -111,88 +129,66 @@ body {
   transform: translate(-50%, -50%);
 }
 
-.control-button {
-  margin: 0px 35px;
-  font-size: 2em;
-}
-
+/*set the margin to 0 for the serch input in the menu*/
 .search-form {
   margin:0px;
 }
 
+/*class to change the cursor on clickable items*/
 .clickable {
   cursor: pointer;
 }
 
+/*change the height of the navbar*/
 .navbar-nav > li > a {padding-top:5px !important; padding-bottom:5px !important;}
 .navbar {min-height:32px !important}
 
+/*class to use newline from preformatted text*/
 .pre-whitespace{
   white-space:pre;
 }
 
+/*display ... when text is cut off*/
 .dot-overflow{
   overflow:hidden !important;
   text-overflow:ellipsis;
 }
 
-.menu-float-right{
-  float:right;
-  text-align:right;
-}
-
-.menu-float-left{
-  float:left;
-  text-align:left;
-}
-
-.td-content{
-  width: 85%;
-}
-
+/*class to display the first line bold (used in the menu)*/
 .first-line-bold::first-line {
   font-weight:bold;
 }
 
-.table {
-  table-layout:fixed;
-}
-
+/*class to center the glyphicon in a button*/
 .glyphicon.gi-v-centered {
   position: inherit;
   vertical-align: middle;
 }
 
-.gi-2x{font-size: 2em;}
-.gi-3x{font-size: 3em;}
-.gi-4x{font-size: 4em;}
-.gi-5x{font-size: 5em;}
-
-.top-buffer {margin-top:20px;}
-
+/*custtom slider start*/
 input[type=range] {
-    /*removes default webkit styles*/
-    -webkit-appearance: none;
+  /*removes default webkit styles*/
+  -webkit-appearance: none;
 }
 input[type=range]::-webkit-slider-runnable-track {
-    width: auto;
-    height: 6px;
-    background: #ddd;
-    border: none;
-    border-radius: 3px;
+  width: auto;
+  height: 6px;
+  background: #ddd;
+  border: none;
+  border-radius: 3px;
 }
 input[type=range]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    border: none;
-    height: 16px;
-    width: 16px;
-    border-radius: 50%;
-    background: lightblue;
-    margin-top: -4px;
+  -webkit-appearance: none;
+  border: none;
+  height: 16px;
+  width: 16px;
+  border-radius: 50%;
+  background: lightblue;
+  margin-top: -4px;
 }
 input[type=range]:focus {
-    outline: none;
+  outline: none;
 }
 input[type=range]:focus::-webkit-slider-thumb {
-
 }
+/*custom slider end*/
