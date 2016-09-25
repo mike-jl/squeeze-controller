@@ -11,30 +11,35 @@ LmsApi.config(function ($routeProvider) {
 LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $timeout, $log, hotkeys, localStorage) {
   $scope.TrackPosChange = 0
   $scope.VolChange = 0
+  // Try to load maxitems from storage, if it's not set set it to the default value
   $scope.maxitems = localStorage.get('maxitems')
   if ($scope.maxitems === null) {
     console.log('Setting maxitems to their default value (50)')
     $scope.maxitems = 50
     localStorage.set('maxitems', 50)
   }
+  // Try to load menuArtwork from storage, if it's not set set it to the default value
   $scope.menuArtwork = localStorage.get('menuArtwork')
   if ($scope.menuArtwork === null) {
     console.log('Setting menuArtwork to their default value (true)')
     $scope.maxitems = true
     localStorage.set('menuArtwork', true)
   }
+  // Try to load playlistArtwork from storage, if it's not set set it to the default value
   $scope.playlistArtwork = localStorage.get('playlistArtwork')
   if ($scope.playlistArtwork === null) {
     console.log('Setting playlistArtwork to their default value (true)')
     $scope.maxitems = true
     localStorage.set('playlistArtwork', true)
   }
+  // Try to load bubbletips from storage, if it's not set set it to the default value
   $scope.bubbletips = localStorage.get('bubbletips')
   if ($scope.bubbletips === null) {
     console.log('Setting bubbletips to their default value (true)')
     $scope.bubbletips = true
     localStorage.set('bubbletips', true)
   }
+  // Try to load the URL and the Port from the storage
   var storagelmsurl = localStorage.get('lmsurl')
   var storagelmsport = localStorage.get('lmsport')
   // If the url or port settings are undefined; jump directly to the settings
@@ -43,32 +48,33 @@ LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $ti
   }
   // build the lms url from the settings
   $scope.LmsUrl = 'http://' + storagelmsurl + ':' + storagelmsport + '/'
+  // Try to load the last player from the storage
   var setPlayer = localStorage.get('player')
   // get the players
   $http.post($scope.LmsUrl + 'jsonrpc.js', '{"id":1,"method":"slim.request","params":["-",["players",0,99]]}').then(function (r) {
     $scope.players = r.data.result
     // If there is a player in the settings and it matches with the newly polled player; set it
-    if (setPlayer) {
-      if (setPlayer.playerid === $scope.players.players_loop[setPlayer.playerindex].playerid) {
-        $scope.player = $scope.players.players_loop[setPlayer.playerindex]
-      } else {
-      // Else just set the first player of the response
-        $scope.player = $scope.players.players_loop[0]
-      }
+    if (setPlayer && $scope.players.players_loop[setPlayer.playerindex] && setPlayer.playerid === $scope.players.players_loop[setPlayer.playerindex].playerid) {
+      $scope.player = $scope.players.players_loop[setPlayer.playerindex]
     } else {
+      // Else just set the first player of the response
       $scope.player = $scope.players.players_loop[0]
     }
+    // Sace the selected player to the storage and to the setPlayer var
     localStorage.set('player', $scope.player)
     setPlayer = $scope.player
+    // start polling from the server
     poller()
+    // load the main menu from the server
     $scope.getmenu()
   })
 
+  // Function to poll data from the server, calls ist self every 500ms
   var poller = function () {
     $http.post($scope.LmsUrl + 'jsonrpc.js', '{"id":1,"method":"slim.request","params":["' + $scope.player.playerid + '", ["status", "0", 999, "tags:alyK"]]}').then(function (r) {
       $scope.data = r.data.result
       // get the cover for the current song
-      // if there are tracks in the playlist continue; else set to lms backup cover (id=0)
+      // if there are tracks in the playlist continue; else set to lms fallback cover (id=0)
       if ($scope.data.playlist_tracks !== 0) {
         // if artwork_url is defined, it is an remote cover; else its a local cover which means we can just build the url with the track id
         if ($scope.data.playlist_loop[$scope.data.playlist_cur_index].artwork_url) {
@@ -108,7 +114,7 @@ LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $ti
         localStorage.set('player', $scope.player)
         setPlayer = $scope.player
       }
-      // Set title for the repeate button
+      // Set title for the repeat button
       if ($scope.data['playlist repeat'] === 0) {
         $scope.repeatText = 'Repeat Off'
       } else if ($scope.data['playlist repeat'] === 1) {
@@ -124,6 +130,7 @@ LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $ti
       } else if ($scope.data['playlist shuffle'] === 2) {
         $scope.shuffleText = 'Shuffle by Album'
       }
+      // Start this function again after 500ms
       $timeout(poller, 500)
     })
   }
@@ -158,7 +165,6 @@ LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $ti
       $scope.filterisEnable = true
       $scope.nodefilter = 'home'
       $scope.menu = r
-      $scope.filterisEnable = true
       $scope.orderby = 'weight'
       $scope.breadCrumbs = []
     })
@@ -357,7 +363,7 @@ LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $ti
     }
   }, false)
 
-  // define kotkeys
+  // define hotkeys
   hotkeys.bindTo($scope)
     .add({
       combo: 'space',
@@ -497,23 +503,30 @@ LmsApi.factory('authFactory', function ($injector, base64, localStorage) {
   return factory
 })
 
+// On route change (when the user change from the settings page back to home) we need to reload the url from the settings
 LmsApi.run(function ($rootScope, authFactory) {
   $rootScope.$on('$routeChangeStart', function (event, next, current) {
     authFactory.reloadUrl()
   })
 })
 
+// http interceptor to handle authentification on the logitech media server
 LmsApi.config(function ($httpProvider) {
   $httpProvider.interceptors.push(function ($q, $injector, authFactory) {
     return {
+      // function to execute on every request
       request: function (request) {
+        // get the auth string from the local storage
         var auth = authFactory.get()
+        // If there is a saved auth string and the url matches the saved lms url we set the auth header in the request
         if (typeof auth !== 'undefined' && request.url.indexOf(authFactory.getUrl()) !== -1) {
           request.headers.authorization = 'Basic ' + auth
         }
         return request
       },
+      // function to execute if the server respone with an error
       responseError: function (rejection) {
+        // If the rejection status is 401 (permission denied) and the url matches the saved lms url we open the login dialog and then try again
         if (rejection.status === 401 && rejection.config.url.indexOf(authFactory.getUrl()) !== -1) {
           return authFactory.set().then(function () {
             return $injector.get('$http')(rejection.config)
@@ -525,28 +538,33 @@ LmsApi.config(function ($httpProvider) {
   })
 })
 
-LmsApi.filter('menu_filter', ['$filter', function ($filter) {
-  return function (input, filter1, filter2, isEnable) {
-    if (isEnable) {
-      return $filter('filter')(input, {[filter1]: filter2})
+// filter that filters an oject based on a key with a specific value, also takes a switch to disable it
+// Example: object:'name':'mike':true Only return objects where the key name is set to the value mike
+LmsApi.filter('objectFilter', ['$filter', function ($filter) {
+  return function (input, key, value, enable) {
+    if (enable) {
+      return $filter('filter')(input, {[key]: value})
     } else {
       return input
     }
   }
 }])
 
+// filter that takes a strings as input and returns an intiger
 LmsApi.filter('num', function () {
   return function (input) {
     return parseInt(input, 10)
   }
 })
 
+// filter that takes seconds as input and returns formatted date
 LmsApi.filter('secondsToDateTime', function () {
   return function (seconds) {
     return new Date(1970, 0, 1).setSeconds(seconds)
   }
 })
 
+// Simple filter that returns the type of the input
 LmsApi.filter('typeof', function () {
   return function (input) {
     return typeof input

@@ -73,7 +73,7 @@
       <ul class="list-group" dnd-list="menu.item_loop" dnd-allowed-types="[null]">
         <li ng-if="menu"
             class="list-group-item"
-            ng-repeat="menuitem in menu.item_loop | menu_filter:'node':nodefilter:filterisEnable | orderBy:orderby"
+            ng-repeat="menuitem in menu.item_loop | objectFilter:'node':nodefilter:filterisEnable | orderBy:orderby"
             dnd-draggable="menuitem"
             dnd-effect-allowed="copy"
             dnd-disable-if="!menuitem.params.isContextMenu && menuitem.type !== 'playlist' && menuitem.type !== 'audio'"
