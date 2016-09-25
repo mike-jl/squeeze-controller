@@ -71,9 +71,9 @@
   <div class="content-row">
     <div class="content-header-col-50 scroll">
       <ul class="list-group" dnd-list="menu.item_loop" dnd-allowed-types="[null]">
-        <li ng-if="menu"
+        <li ng-if="(menu | typeof) != 'undefined'"
             class="list-group-item"
-            ng-repeat="menuitem in menu.item_loop | objectFilter:'node':nodefilter:filterisEnable | orderBy:orderby"
+            ng-repeat="menuitem in filteredMenu = ( menu.item_loop |  objectFilter:'node':nodefilter:filterisEnable ) | orderBy:orderby | startFrom:startFrom | limitTo:maxitems"
             dnd-draggable="menuitem"
             dnd-effect-allowed="copy"
             dnd-disable-if="!menuitem.params.isContextMenu && menuitem.type !== 'playlist' && menuitem.type !== 'audio'"
@@ -111,8 +111,8 @@
         </li>
       </ul>
       <div class="text-center">
-        <ul ng-show="(menu.count / maxitems) > 1 && !filterisEnable"
-        uib-pagination ng-change="pagefunc()" total-items="menu.count" items-per-page="maxitems" ng-model="menuPage"
+        <ul ng-show="filteredMenu.length > maxitems"
+        uib-pagination ng-change="pagefunc()" total-items="filteredMenu.length" items-per-page="maxitems" ng-model="menuPage"
         max-size="4" force-ellipses="true" class="pagination pagination-sm" boundary-links="true"
         previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"></ul>
       </div>

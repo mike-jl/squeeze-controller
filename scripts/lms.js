@@ -22,7 +22,7 @@ LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $ti
   $scope.menuArtwork = localStorage.get('menuArtwork')
   if ($scope.menuArtwork === null) {
     console.log('Setting menuArtwork to their default value (true)')
-    $scope.maxitems = true
+    $scope.menuArtwork = true
     localStorage.set('menuArtwork', true)
   }
   // Try to load playlistArtwork from storage, if it's not set set it to the default value
@@ -145,6 +145,7 @@ LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $ti
           } else {
             $scope.baseactions = 0
           }
+          $scope.startFrom = 0
           $scope.menuPage = 1
           $scope.menu = r.data.result
           $scope.filterisEnable = menuparams[1]
@@ -161,6 +162,7 @@ LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $ti
   // function for getting the main menu and setting all the required vars
   $scope.getmenu = function () {
     $scope.lmsPost(['menu', 0, 100, 'direct:1']).then(function (r) {
+      $scope.startFrom = 0
       $scope.menuPage = 1
       $scope.filterisEnable = true
       $scope.nodefilter = 'home'
@@ -200,7 +202,7 @@ LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $ti
         params.push(value)
       }
       if (menuChange) {
-        params.push(0, $scope.maxitems)
+        params.push(0, 9999)
       }
       for (key in item.actions.go.params) {
         value = item.actions.go.params[key]
@@ -241,7 +243,7 @@ LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $ti
       params.push(value)
     }
     if (menuChange) {
-      params.push(0, $scope.maxitems)
+      params.push(0, 9999)
     }
     for (key in $scope.baseactions[action].params) {
       value = $scope.baseactions[action].params[key]
@@ -276,7 +278,7 @@ LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $ti
       value = item.actions.go.cmd[key]
       params.push(value)
     }
-    params.push(0, $scope.maxitems)
+    params.push(0, 9999)
     for (key in item.actions.go.params) {
       value = item.actions.go.params[key]
       if (value === '__TAGGEDINPUT__') {
@@ -319,6 +321,7 @@ LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $ti
   }
 
   $scope.breadCrumbfunc = function (index) {
+    $scope.startFrom = 0
     $scope.menuPage = 1
     $scope.filterisEnable = $scope.breadCrumbs[index][1]
     $scope.orderby = $scope.breadCrumbs[index][2]
@@ -329,9 +332,10 @@ LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $ti
   }
 
   $scope.pagefunc = function () {
-    var params = $scope.lastParams
-    params[2] = ($scope.menuPage - 1) * $scope.maxitems
-    $scope.lmsPost(params, false, true)
+    $scope.startFrom = ($scope.menuPage - 1) * $scope.maxitems
+    // var params = $scope.lastParams
+    // params[2] = ($scope.menuPage - 1) * $scope.maxitems
+    // $scope.lmsPost(params, false, true)
   }
 
   $scope.dndPlaylistMove = function (type, item, to) {
@@ -569,4 +573,15 @@ LmsApi.filter('typeof', function () {
   return function (input) {
     return typeof input
   }
+})
+
+LmsApi.filter('startFrom', function() {
+    return function(input, start) {
+      if (typeof start !== 'undefined') {
+        start = +start; //parse to int
+        return input.slice(start);
+      } else {
+        return input
+      }
+    }
 })
