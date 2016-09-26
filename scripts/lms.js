@@ -333,9 +333,6 @@ LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $ti
 
   $scope.pagefunc = function () {
     $scope.startFrom = ($scope.menuPage - 1) * $scope.maxitems
-    // var params = $scope.lastParams
-    // params[2] = ($scope.menuPage - 1) * $scope.maxitems
-    // $scope.lmsPost(params, false, true)
   }
 
   $scope.dndPlaylistMove = function (type, item, to) {
