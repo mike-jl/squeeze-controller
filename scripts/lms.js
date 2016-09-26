@@ -572,13 +572,13 @@ LmsApi.filter('typeof', function () {
   }
 })
 
-LmsApi.filter('startFrom', function() {
-    return function(input, start) {
-      if (typeof start !== 'undefined') {
-        start = +start; //parse to int
-        return input.slice(start);
-      } else {
-        return input
-      }
+LmsApi.filter('startFrom', function () {
+  return function (input, start) {
+    if (typeof start !== 'undefined') {
+      start = +start
+      return input.slice(start)
+    } else {
+      return input
     }
+  }
 })
