@@ -70,6 +70,7 @@
   </div>
   <div class="content-row">
     <div class="content-header-col-50 scroll">
+      <treasure-overlay-spinner active="loadMenu">
       <ul class="list-group" dnd-list="menu.item_loop" dnd-allowed-types="[null]">
         <li ng-if="(menu | typeof) != 'undefined'"
             class="list-group-item"
@@ -116,6 +117,7 @@
         max-size="4" force-ellipses="true" class="pagination pagination-sm" boundary-links="true"
         previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"></ul>
       </div>
+      </treasure-overlay-spinner>
     </div>
     <div class="content-header-col-50 scroll">
       <ul class="list-group" dnd-list="playlist" dnd-drop="dndPlaylistMove(type, item, index)">
