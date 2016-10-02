@@ -174,6 +174,7 @@ LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $ti
       $scope.menu = r
       $scope.orderby = 'weight'
       $scope.breadCrumbs = []
+      $scope.menuFilter = ''
     })
   }
   // function to handle navigation in the menu
