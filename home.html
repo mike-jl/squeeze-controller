@@ -50,8 +50,8 @@
   <div class="content-header-row">
     <div class="content-header-col-50" style="font-size:16px;">
       <div style="font-size:16px; padding:7px 10px;">
-        <b class="clickable" ng-click="getmenu()">Home</b>
-        <b class="clickable" ng-repeat="breadCrumb in breadCrumbs track by $index" ng-click="breadCrumbfunc($index)">
+        <b class="clickable" ng-click="menuLoading || getmenu()">Home</b>
+        <b class="clickable" ng-repeat="breadCrumb in breadCrumbs track by $index" ng-click="menuLoading || breadCrumbfunc($index)">
           <span class="glyphicon glyphicon-menu-right"></span>
           {{breadCrumb[0].text}}
         </b>
@@ -80,7 +80,7 @@
             dnd-type="'menu'">
           <div class="btn-group vert-align pull-right" uib-dropdown on-toggle="open ? submenu(menuitem,'more',1) : ddClose()"
                ng-if="menuitem.params.isContextMenu || menuitem.type == 'playlist' || menuitem.type == 'audio'" class="pull-right text-nowrap">
-            <button class="btn btn-xs" type="button" uib-dropdown-toggle id="{{menuitem.commonParams.album_id}}">
+            <button ng-disabled="menuLoading" class="btn btn-xs" type="button" uib-dropdown-toggle id="{{menuitem.commonParams.album_id}}">
               <span class="glyphicon glyphicon-option-horizontal gi-v-centered"></span>
             </button>
             <ul class="dropdown-menu dropdown-menu-right" uib-dropdown-menu role="menu" aria-labelledby="{{menuitem.commonParams.album_id}}">
@@ -92,16 +92,16 @@
           <div ng-if="menuitem.type=='search' || menuitem.actions.go.params.search" class="pull-right" style="width:100px">
             <form class="search-form" ng-submit="search(menuitem,searchInput)">
               <div class="input-group input-group-sm">
-                <input type="text" class="form-control" ng-model="searchInput" placeholder="Search..."></input>
+                <input ng-disabled="menuLoading" type="text" class="form-control" ng-model="searchInput" placeholder="Search..."></input>
                 <span class="input-group-btn">
-                  <button class="btn btn-default" type="button submit">
+                  <button ng-disabled="menuLoading" class="btn btn-default" type="button submit">
                     <span class="glyphicon glyphicon-search"></span>
                   </button>
                 </span>
               </div>
             </form>
           </div>
-          <div class="clickable" ng-attr-title="{{ bubbletips ? menuitem.text : undefined }}" ng-click="menufunc(menuitem)">
+          <div class="clickable" ng-attr-title="{{ bubbletips ? menuitem.text : undefined }}" ng-click="menuLoading || menufunc(menuitem)">
             <img style="float:left;width:38px;margin-right:10px;"
                  ng-if="(menuitem.type == 'playlist' || menuitem.type == 'audio') && menuArtwork == true"
                  http-src="{{iconUrl(menuitem)}}"></img>
