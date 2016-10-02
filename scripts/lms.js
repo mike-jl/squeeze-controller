@@ -1,5 +1,5 @@
 'use strict'
-var LmsApi = angular.module('LmsApi', ['ngAnimate', 'ui.bootstrap', 'ngRoute', 'cfp.hotkeys', 'utf8-base64', 'angular.img', 'dndLists', 'treasure-overlay-spinner'])
+var LmsApi = angular.module('LmsApi', ['ngAnimate', 'ui.bootstrap', 'ngRoute', 'cfp.hotkeys', 'utf8-base64', 'angular.img', 'dndLists'])
 
 LmsApi.config(function ($routeProvider) {
   $routeProvider
@@ -137,9 +137,6 @@ LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $ti
 
   $scope.lmsPost = function (params, menuparams, page) {
     console.log('lmsPost: ' + params)
-    if (menuparams && menuparams[0]) {
-      $scope.loadMenu = true
-    }
     return $http.post($scope.LmsUrl + 'jsonrpc.js', '{"id":1,"method":"slim.request","params":["' + $scope.player.playerid + '",' + angular.toJson(params) + ']}').then(function (r) {
       if (menuparams) {
         if (menuparams[0]) {
@@ -155,7 +152,6 @@ LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $ti
           $scope.orderby = menuparams[2]
           $scope.breadCrumbs.push([menuparams[3], $scope.filterisEnable, $scope.orderby, $scope.baseactions, $scope.menu, params])
           $scope.lastParams = params
-          $scope.loadMenu = false
         }
       } else if (page) {
         $scope.menu = r.data.result
