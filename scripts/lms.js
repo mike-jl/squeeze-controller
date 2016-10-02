@@ -155,6 +155,7 @@ LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $ti
           $scope.orderby = menuparams[2]
           $scope.breadCrumbs.push([menuparams[3], $scope.filterisEnable, $scope.orderby, $scope.baseactions, $scope.menu, params])
           $scope.lastParams = params
+          $scope.menuFilter = ''
           $scope.menuLoading = false
         }
       } else if (page) {
@@ -333,6 +334,7 @@ LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $ti
     $scope.menu = $scope.breadCrumbs[index][4]
     $scope.lastParams = $scope.breadCrumbs[index][5]
     $scope.breadCrumbs.splice(index + 1, 99)
+    $scope.menuFilter = ''
   }
 
   $scope.pagefunc = function () {

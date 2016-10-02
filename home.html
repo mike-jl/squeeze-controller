@@ -71,9 +71,14 @@
   <div class="content-row">
     <div class="content-header-col-50 scroll">
       <ul class="list-group" dnd-list="menu.item_loop" dnd-allowed-types="[null]">
+        <li ng-if="filteredMenu.length > maxitems || menuFilter" class="list-group-item">
+          <div class="form-group search-form">
+            <input type="text" class="form-control input-sm" ng-model="$parent.menuFilter" placeholder="Filter..."></input>
+          </div>
+        </li>
         <li ng-if="(menu | typeof) != 'undefined'"
             class="list-group-item"
-            ng-repeat="menuitem in filteredMenu = ( menu.item_loop |  objectFilter:'node':nodefilter:filterisEnable ) | orderBy:orderby | startFrom:startFrom | limitTo:maxitems"
+            ng-repeat="menuitem in filteredMenu = ( menu.item_loop | objectFilter:'node':nodefilter:filterisEnable | objectFilter:'text':menuFilter:true ) | orderBy:orderby | startFrom:startFrom | limitTo:maxitems"
             dnd-draggable="menuitem"
             dnd-effect-allowed="copy"
             dnd-disable-if="!menuitem.params.isContextMenu && menuitem.type !== 'playlist' && menuitem.type !== 'audio'"
