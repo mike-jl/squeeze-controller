@@ -96,6 +96,7 @@ LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $ti
       if (!angular.equals($scope.playlist, $scope.data.playlist_loop)) {
         $scope.playlist = $scope.data.playlist_loop
         console.log('update playlist')
+        console.log($scope.playlist)
       }
       // Don't set the volume while changing it
       if ($scope.VolChange === 0) {
@@ -136,11 +137,12 @@ LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $ti
   }
 
   $scope.lmsPost = function (params, menuparams, page) {
-    console.log('lmsPost: ' + params)
+    console.log('lmsPost: ' + angular.toJson(params))
     if (menuparams && menuparams[0]) {
       $scope.menuLoading = true
     }
     return $http.post($scope.LmsUrl + 'jsonrpc.js', '{"id":1,"method":"slim.request","params":["' + $scope.player.playerid + '",' + angular.toJson(params) + ']}').then(function (r) {
+      console.log(r.data)
       if (menuparams) {
         if (menuparams[0]) {
           if (r.data.result.base) {
@@ -198,8 +200,16 @@ LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $ti
       var menuChange = true
       if (item.actions.go.nextWindow === 'parentNoRefresh' ||
           item.actions.go.nextWindow === 'parent' ||
-          item.actions.go.nextWindow === 'nowPlaying') {
+          item.actions.go.nextWindow === 'nowPlaying' ||
+          item.nextWindow === 'grandparent') {
         menuChange = false
+      }
+      if (item.actions.go.nextWindow === 'parentNoRefresh' ||
+          item.actions.go.nextWindow === 'parent') {
+        $scope.breadCrumbfunc(($scope.breadCrumbs.length - 1))
+      }
+      if (item.nextWindow === 'grandparent') {
+        $scope.breadCrumbfunc(($scope.breadCrumbs.length - 2))
       }
       var key
       var value
@@ -215,8 +225,11 @@ LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $ti
         if (key === 'search') {
           console.log('this is a search item, use the search input')
           return
+        } else if (value === null) {
+          console.log('value for ' + key + ' is null, so leaving it out')
+        } else {
+          params.push(key + ':' + value)
         }
-        params.push(key + ':' + value)
       }
       params.push('useContextMenu:1')
       $scope.lmsPost(params, [menuChange, false, '$index', item])
@@ -327,6 +340,7 @@ LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $ti
   }
 
   $scope.breadCrumbfunc = function (index) {
+    console.log('breadCrumbfunc ' + index)
     $scope.startFrom = 0
     $scope.menuPage = 1
     $scope.filterisEnable = $scope.breadCrumbs[index][1]
