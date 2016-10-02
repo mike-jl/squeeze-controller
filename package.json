@@ -1,7 +1,7 @@
 {
   "name": "squeeze-controller",
   "productName": "Squeeze Controller",
-  "version": "0.1.0-alpha.9",
+  "version": "0.1.0-alpha.10",
   "main": "main.js",
   "license": "MIT",
   "repository": "michiil/squeeze-controller",
