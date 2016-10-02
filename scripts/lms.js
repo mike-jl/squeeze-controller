@@ -310,7 +310,9 @@ LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $ti
   }
 
   $scope.iconUrl = function (item) {
-    if (item.artwork_url) {
+    if (item.presetParams && item.presetParams.icon) {
+      return $scope.LmsUrl + item.presetParams.icon.replace(/^\//, '').replace(/(\.[\w\d_-]+)$/i, '_200x200_p$1')
+    } else if (item.artwork_url) {
       if (item.artwork_url.startsWith('http')) {
         return item.artwork_url
       } else {
