@@ -55,6 +55,7 @@ LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $ti
   }
   // build the lms url from the settings
   $scope.LmsUrl = 'http://' + storagelmsurl + ':' + storagelmsport + '/'
+  if ($scope.logging === true) console.log('lmsurl: ' + $scope.LmsUrl)
   // Try to load the last player from the storage
   var setPlayer = localStorage.get('player')
   // get the players
