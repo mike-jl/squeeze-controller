@@ -317,6 +317,9 @@ LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $ti
     } else if (item.presetParams && item.presetParams.icon) {
       if ($scope.logging === true) console.log('iconurl presetParams.icon')
       return $scope.LmsUrl + item.presetParams.icon.replace(/^\//, '').replace(/(\.[\w\d_-]+)$/i, '_' + res + 'x' + res + '_p$1')
+    } else if (item.commonParams && item.commonParams.artist_id) {
+      if ($scope.logging === true) console.log('iconurl commonParams.artist_id')
+      return
     } else if (item.commonParams && item.commonParams.track_id) {
       if ($scope.logging === true) console.log('iconurl commonParams.track_id')
       return $scope.LmsUrl + 'music/' + item.commonParams.track_id + '/cover_' + res + 'x' + res + '_p'
