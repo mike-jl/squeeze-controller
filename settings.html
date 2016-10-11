@@ -20,7 +20,10 @@
   <div class="checkbox">
     <label><input type="checkbox" ng-model="playlistArtwork">Enable Artwork in the playlist</label>
   </div>
-  <button ng-mousedown="saveSettings({lmsurl:lmsurl,lmsport:lmsport,bubbletips:bubbletips,maxitems:maxitems,menuArtwork:menuArtwork,playlistArtwork:playlistArtwork})" type="button" class="btn btn-success pull-right">
+  <div class="checkbox">
+    <label><input type="checkbox" ng-model="logging">Enable debug Logging</label>
+  </div>
+  <button ng-mousedown="saveSettings({lmsurl:lmsurl,lmsport:lmsport,bubbletips:bubbletips,maxitems:maxitems,menuArtwork:menuArtwork,playlistArtwork:playlistArtwork,logging:logging})" type="button" class="btn btn-success pull-right">
     <span class="glyphicon glyphicon-floppy-disk"></span>
     Save
   </button><br><br>

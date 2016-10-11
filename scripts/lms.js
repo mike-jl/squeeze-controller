@@ -11,31 +11,38 @@ LmsApi.config(function ($routeProvider) {
 LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $timeout, $log, hotkeys, localStorage) {
   $scope.TrackPosChange = 0
   $scope.VolChange = 0
+  // Try to load logging from storage, if it's not set set it to the default value
+  $scope.logging = localStorage.get('logging')
+  if ($scope.logging === null) {
+    if ($scope.logging === true) console.log('Setting logging to their default value (false)')
+    $scope.logging = false
+    localStorage.set('logging', false)
+  }
   // Try to load maxitems from storage, if it's not set set it to the default value
   $scope.maxitems = localStorage.get('maxitems')
   if ($scope.maxitems === null) {
-    console.log('Setting maxitems to their default value (50)')
+    if ($scope.logging === true) console.log('Setting maxitems to their default value (50)')
     $scope.maxitems = 50
     localStorage.set('maxitems', 50)
   }
   // Try to load menuArtwork from storage, if it's not set set it to the default value
   $scope.menuArtwork = localStorage.get('menuArtwork')
   if ($scope.menuArtwork === null) {
-    console.log('Setting menuArtwork to their default value (true)')
+    if ($scope.logging === true) console.log('Setting menuArtwork to their default value (true)')
     $scope.menuArtwork = true
     localStorage.set('menuArtwork', true)
   }
   // Try to load playlistArtwork from storage, if it's not set set it to the default value
   $scope.playlistArtwork = localStorage.get('playlistArtwork')
   if ($scope.playlistArtwork === null) {
-    console.log('Setting playlistArtwork to their default value (true)')
+    if ($scope.logging === true) console.log('Setting playlistArtwork to their default value (true)')
     $scope.maxitems = true
     localStorage.set('playlistArtwork', true)
   }
   // Try to load bubbletips from storage, if it's not set set it to the default value
   $scope.bubbletips = localStorage.get('bubbletips')
   if ($scope.bubbletips === null) {
-    console.log('Setting bubbletips to their default value (true)')
+    if ($scope.logging === true) console.log('Setting bubbletips to their default value (true)')
     $scope.bubbletips = true
     localStorage.set('bubbletips', true)
   }
@@ -73,30 +80,10 @@ LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $ti
   var poller = function () {
     $http.post($scope.LmsUrl + 'jsonrpc.js', '{"id":1,"method":"slim.request","params":["' + $scope.player.playerid + '", ["status", "0", 999, "tags:alyK"]]}').then(function (r) {
       $scope.data = r.data.result
-      // get the cover for the current song
-      // if there are tracks in the playlist continue; else set to lms fallback cover (id=0)
-      if ($scope.data.playlist_tracks !== 0) {
-        // if artwork_url is defined, it is an remote cover; else its a local cover which means we can just build the url with the track id
-        if ($scope.data.playlist_loop[$scope.data.playlist_cur_index].artwork_url) {
-          // if the remote cover starts with http we can use it directly; else the url is a sufix for the lms url
-          if ($scope.data.playlist_loop[$scope.data.playlist_cur_index].artwork_url.startsWith('http')) {
-            $scope.CoverUrl = $scope.data.playlist_loop[$scope.data.playlist_cur_index].artwork_url
-          } else {
-            // we can define the size for the cover by adding '_200x200_p' befor the extension
-            $scope.CoverUrl = $scope.LmsUrl + $scope.data.playlist_loop[$scope.data.playlist_cur_index].artwork_url.replace(/^\//, '')
-            $scope.CoverUrl = $scope.CoverUrl.replace(/(\.[\w\d_-]+)$/i, '_200x200_p$1')
-          }
-        } else {
-          $scope.CoverUrl = $scope.LmsUrl + 'music/' + $scope.data.playlist_loop[$scope.data.playlist_cur_index].id + '/cover_200x200_p.png'
-        }
-      } else {
-        $scope.CoverUrl = $scope.LmsUrl + 'music/0/cover_200x200_p.png'
-      }
       // Only refresh playlist if something changed to prevent flicker
       if (!angular.equals($scope.playlist, $scope.data.playlist_loop)) {
         $scope.playlist = $scope.data.playlist_loop
-        console.log('update playlist')
-        console.log($scope.playlist)
+        if ($scope.logging === true) console.log('update playlist: ' + angular.toJson($scope.playlist))
       }
       // Don't set the volume while changing it
       if ($scope.VolChange === 0) {
@@ -137,12 +124,12 @@ LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $ti
   }
 
   $scope.lmsPost = function (params, menuparams, page) {
-    console.log('lmsPost: ' + angular.toJson(params))
+    if ($scope.logging === true) console.log('lmsPost: ' + angular.toJson(params))
     if (menuparams && menuparams[0]) {
       $scope.menuLoading = true
     }
     return $http.post($scope.LmsUrl + 'jsonrpc.js', '{"id":1,"method":"slim.request","params":["' + $scope.player.playerid + '",' + angular.toJson(params) + ']}').then(function (r) {
-      console.log(r.data)
+      if ($scope.logging === true) console.log('lmsreturn: ' + r.data)
       if (menuparams) {
         if (menuparams[0]) {
           if (r.data.result.base) {
@@ -181,22 +168,22 @@ LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $ti
   }
   // function to handle navigation in the menu
   $scope.menufunc = function (item) {
-    console.log(angular.toJson(item))
+    if ($scope.logging === true) console.log(angular.toJson(item))
     var params = []
     if (item.action === 'none') {
       return
     }
     if (item.isANode) {
-      console.log('Node')
+      if ($scope.logging === true) console.log('menufunc: Node')
       $scope.nodefilter = item.id
       $scope.breadCrumbs.push([item, $scope.filterisEnable, $scope.orderby, $scope.baseactions, $scope.menu])
     } else if (item.actions && item.actions.do) {
-      console.log('Action: do; without baseaction')
+      if ($scope.logging === true) console.log('menufunc: Action: do; without baseaction')
       params.push.apply(params, item.actions.do.cmd)
       $scope.lmsPost(params)
       $timeout($scope.getmenu, 600)
     } else if (item.actions && item.actions.go) {
-      console.log('Action: go; without baseaction')
+      if ($scope.logging === true) console.log('menufunc: Action: go; without baseaction')
       var menuChange = true
       if (item.actions.go.nextWindow === 'parentNoRefresh' ||
           item.actions.go.nextWindow === 'parent' ||
@@ -223,10 +210,10 @@ LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $ti
       for (key in item.actions.go.params) {
         value = item.actions.go.params[key]
         if (key === 'search') {
-          console.log('this is a search item, use the search input')
+          if ($scope.logging === true) console.log('menufunc: this is a search item, use the search input')
           return
         } else if (value === null) {
-          console.log('value for ' + key + ' is null, so leaving it out')
+          if ($scope.logging === true) console.log('menufunc: value for ' + key + ' is null, so leaving it out')
         } else {
           params.push(key + ':' + value)
         }
@@ -238,7 +225,7 @@ LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $ti
       if (item.goAction) {
         action = item.goAction
       }
-      console.log('Action: ' + action + '; with baseaction')
+      if ($scope.logging === true) console.log(' menufunc: Action: ' + action + '; with baseaction')
       if ($scope.baseactions === 0) {
         console.error('something went horribly wrong..')
         return
@@ -309,40 +296,48 @@ LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $ti
     $scope.lmsPost(params, [true, false, '$index', item])
   }
 
-  $scope.iconUrl = function (item) {
-    if (item.presetParams && item.presetParams.icon) {
-      return $scope.LmsUrl + item.presetParams.icon.replace(/^\//, '').replace(/(\.[\w\d_-]+)$/i, '_200x200_p$1')
+  $scope.iconUrl = function (item, res) {
+    if ($scope.logging === true) console.log('iconUrl: ' + angular.toJson(item))
+    if (typeof item === 'undefined') {
+      if ($scope.logging === true) console.log('iconurl undefined')
+      return $scope.LmsUrl + 'music/0/cover_' + res + 'x' + res + '_p.png'
+    } else if (item.icon) {
+      if (item.icon.startsWith('http')) {
+        if ($scope.logging === true) console.log('iconurl icon start with http')
+        return item.icon
+      } else {
+        if ($scope.logging === true) console.log('iconurl icon')
+        var iconrep = item.icon.replace(/(\.[\w\d_-]+)$/i, '_' + res + 'x' + res + '_p$1')
+        if (item.icon === iconrep) {
+          iconrep = item.icon + '_' + res + 'x' + res + '_p'
+        }
+        return $scope.LmsUrl + iconrep
+      }
+    } else if (item.presetParams && item.presetParams.icon) {
+      if ($scope.logging === true) console.log('iconurl presetParams.icon')
+      return $scope.LmsUrl + item.presetParams.icon.replace(/^\//, '').replace(/(\.[\w\d_-]+)$/i, '_' + res + 'x' + res + '_p$1')
+    } else if (item.commonParams && item.commonParams.track_id) {
+      if ($scope.logging === true) console.log('iconurl commonParams.track_id')
+      return $scope.LmsUrl + 'music/' + item.commonParams.track_id + '/cover_' + res + 'x' + res + '_p'
     } else if (item.artwork_url) {
       if (item.artwork_url.startsWith('http')) {
+        if ($scope.logging === true) console.log('iconurl artwork_url start with http')
         return item.artwork_url
       } else {
-        return $scope.LmsUrl + item.artwork_url.replace(/^\//, '').replace(/(\.[\w\d_-]+)$/i, '_200x200_p$1')
+        if ($scope.logging === true) console.log('iconurl artwork_url')
+        return $scope.LmsUrl + item.artwork_url.replace(/^\//, '').replace(/(\.[\w\d_-]+)$/i, '_' + res + 'x' + res + '_p$1')
       }
+    } else if (item.id) {
+      if ($scope.logging === true) console.log('iconurl id')
+      return $scope.LmsUrl + 'music/' + item.id + '/cover_' + res + 'x' + res + '_p'
     } else {
-      if (item.id) {
-        return $scope.LmsUrl + 'music/' + item.id + '/cover_80x80_p'
-      } else {
-        if (item.icon) {
-          if (item.icon.startsWith('http')) {
-            return item.icon
-          } else {
-            var iconrep = item.icon.replace(/(\.[\w\d_-]+)$/i, '_200x200_p$1')
-            if (item.icon === iconrep) {
-              iconrep = item.icon + '_80x80_p'
-            }
-            return $scope.LmsUrl + iconrep
-          }
-        } else if (item.commonParams && item.commonParams.track_id) {
-          return $scope.LmsUrl + 'music/' + item.commonParams.track_id + '/cover_80x80_p'
-        } else {
-          return
-        }
-      }
+      if ($scope.logging === true) console.log('iconurl fallback cover')
+      return $scope.LmsUrl + 'music/0/cover_' + res + 'x' + res + '_p.png'
     }
   }
 
   $scope.breadCrumbfunc = function (index) {
-    console.log('breadCrumbfunc ' + index)
+    if ($scope.logging === true) console.log('breadCrumbfunc ' + index)
     $scope.startFrom = 0
     $scope.menuPage = 1
     $scope.filterisEnable = $scope.breadCrumbs[index][1]
@@ -433,6 +428,7 @@ LmsApi.controller('SettingsCtrl', function ($scope, $log, localStorage, $locatio
   $scope.maxitems = localStorage.get('maxitems')
   $scope.menuArtwork = localStorage.get('menuArtwork')
   $scope.playlistArtwork = localStorage.get('playlistArtwork')
+  $scope.logging = localStorage.get('logging')
   $scope.saveSettings = function (settings) {
     for (var key in settings) {
       var value = settings[key]
