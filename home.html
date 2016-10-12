@@ -48,18 +48,19 @@
     </div>
   </div>
   <div class="content-header-row">
-    <div class="content-header-col-50" style="font-size:16px;">
-      <div style="font-size:16px; padding:7px 10px;">
-        <b class="clickable" ng-click="menuLoading || getmenu()">Home</b>
-        <b class="clickable" ng-repeat="breadCrumb in breadCrumbs track by $index" ng-click="menuLoading || breadCrumbfunc($index)">
-          <span class="glyphicon glyphicon-menu-right"></span>
-          {{breadCrumb[0].text}}
-        </b>
-      </div>
+    <div class="content-header-col-50" >
+      <ol class="breadcrumb" style="margin-bottom:0; padding:6px 10px; font-size:15px;background-color:transparent;font-weight:bold;">
+        <li ng-click="menuLoading || getmenu()" ng-class="breadCrumbs.length < 1 && 'active'">
+          <if ng-if="breadCrumbs.length < 1">Home</if><a ng-if="breadCrumbs.length >= 1" href="#">Home</a>
+        </li>
+        <li ng-repeat="breadCrumb in breadCrumbs track by $index" ng-click="menuLoading || breadCrumbfunc($index)" ng-class="$last === true && 'active'">
+          <if ng-if="$last === true">{{breadCrumb[0].text | noNewLine}}</if><a ng-if="$last === false" href="#">{{breadCrumb[0].text | noNewLine}}</a>
+        </li>
+      </ol>
     </div>
     <div class="content-header-col-50">
-      <div style="font-size:16px; padding:7px 10px;">
-        <b>Playlist:</b>
+      <div style="border-radius:4px;font-size:15px;padding:6px 10px;color:#777;font-weight:bold;">
+        Playlist:
         <div class="pull-right">
           <button class="btn btn-sm btn-danger" ng-click="lmsPost(['playlist','clear']);">
             <span class="glyphicon glyphicon-trash gi-v-centered"></span>

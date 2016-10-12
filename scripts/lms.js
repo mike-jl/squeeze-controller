@@ -572,6 +572,13 @@ LmsApi.filter('num', function () {
   }
 })
 
+// filter that takes a strings as input and returns an intiger
+LmsApi.filter('noNewLine', function () {
+  return function (input) {
+    return input.split('\n')[0]
+  }
+})
+
 // filter that takes seconds as input and returns formatted date
 LmsApi.filter('secondsToDateTime', function () {
   return function (seconds) {
