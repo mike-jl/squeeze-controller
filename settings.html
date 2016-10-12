@@ -1,8 +1,12 @@
 <div style="padding:10px;" ng-controller="SettingsCtrl">
   <div class="form-group">
-    <label for="lmsurl">LMS URL:</label>
+  <label for="lmsurl">LMS URL:</label>
+  <div class="input-group">
+    <span class="input-group-addon">http://</span>
     <input ng-model="lmsurl" type="text" class="form-control" id="lmsurl">
+    <span class="input-group-addon">/</span>
   </div>
+</div>
   <div class="form-group">
     <label for="lmsport">LMS Port:</label>
     <input ng-model="lmsport" type="text" class="form-control" id="lmsport">
@@ -21,7 +25,7 @@
     <label><input type="checkbox" ng-model="playlistArtwork">Enable Artwork in the playlist</label>
   </div>
   <div class="checkbox">
-    <label><input type="checkbox" ng-model="logging">Enable debug Logging</label>
+    <label><input type="checkbox" ng-model="logging">Enable Debug Logging</label>
   </div>
   <button ng-mousedown="saveSettings({lmsurl:lmsurl,lmsport:lmsport,bubbletips:bubbletips,maxitems:maxitems,menuArtwork:menuArtwork,playlistArtwork:playlistArtwork,logging:logging})" type="button" class="btn btn-success pull-right">
     <span class="glyphicon glyphicon-floppy-disk"></span>
