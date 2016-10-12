@@ -169,7 +169,11 @@ LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $ti
   }
   // function to handle navigation in the menu
   $scope.menufunc = function (item) {
-    if ($scope.logging === true) console.log(angular.toJson(item))
+    if ($scope.logging === true) console.log('menufunc: ' + angular.toJson(item))
+    if (item.type === 'search' || item.id === 'globalSearch') {
+      if ($scope.logging === true) console.log('menufunc: skipping search item')
+      return
+    }
     var params = []
     if (item.action === 'none') {
       return
@@ -210,10 +214,7 @@ LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $ti
       }
       for (key in item.actions.go.params) {
         value = item.actions.go.params[key]
-        if (key === 'search') {
-          if ($scope.logging === true) console.log('menufunc: this is a search item, use the search input')
-          return
-        } else if (value === null) {
+        if (value === null) {
           if ($scope.logging === true) console.log('menufunc: value for ' + key + ' is null, so leaving it out')
         } else {
           params.push(key + ':' + value)
