@@ -1,7 +1,7 @@
 <div class="wrapper" ng-controller="LmsApiCtrl">
   <div class="header-row">
     <div class="col-25">
-      <img class="img-cover" http-src="{{iconUrl(data.playlist_loop[data.playlist_cur_index], 200)}}"></img>
+      <img class="img-cover" http-src="{{playlistCover(data.playlist_loop[data.playlist_cur_index], 200)}}"></img>
     </div>
     <div class="col-50">
       <div class="title-style" title="{{data.playlist_loop[data.playlist_cur_index].title}}" ng-style="{'visibility':(data.playlist_cur_index | typeof)!='undefined'?'visible':'hidden'}">
@@ -108,7 +108,7 @@
           </div>
           <div class="clickable" ng-attr-title="{{ bubbletips ? menuitem.text : undefined }}" ng-click="menuLoading || menufunc(menuitem)">
             <img style="float:left;width:38px;margin-right:10px;"
-                 ng-if="(menuitem.type == 'playlist' || menuitem.type == 'audio') && menuArtwork == true"
+                 ng-if="(menuitem.type == 'playlist' || menuitem.type == 'audio') && menuArtwork == true && ! menuitem.commonParams.artist_id"
                  http-src="{{iconUrl(menuitem, 40)}}"></img>
             <div class="pre-whitespace first-line-bold dot-overflow">{{menuitem.text}}</div>
           </div>
@@ -134,7 +134,7 @@
             <span class="glyphicon glyphicon-trash gi-v-centered"></span>
           </button>
           <div ng-click="lmsPost(['playlist','index',title['playlist index']]);" class="dot-overflow nowrap">
-            <img ng-if="playlistArtwork == true" http-src="{{iconUrl(title, 70)}}" style="float:left;width:60px;margin-right:10px;"></img>
+            <img ng-if="playlistArtwork == true" http-src="{{playlistCover(title, 70)}}" style="float:left;width:60px;margin-right:10px;"></img>
             <b title="{{title.title}}">{{title.title}}</b><br>
             {{title.artist}}<br>
             {{title.album}}

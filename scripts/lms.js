@@ -79,7 +79,7 @@ LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $ti
 
   // Function to poll data from the server, calls ist self every 500ms
   var poller = function () {
-    $http.post($scope.LmsUrl + 'jsonrpc.js', '{"id":1,"method":"slim.request","params":["' + $scope.player.playerid + '", ["status", "0", 999, "tags:alyK"]]}').then(function (r) {
+    $http.post($scope.LmsUrl + 'jsonrpc.js', '{"id":1,"method":"slim.request","params":["' + $scope.player.playerid + '", ["status", "0", 999, "tags:calyK"]]}').then(function (r) {
       $scope.data = r.data.result
       // Only refresh playlist if something changed to prevent flicker
       if (!angular.equals($scope.playlist, $scope.data.playlist_loop)) {
@@ -130,7 +130,7 @@ LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $ti
       $scope.menuLoading = true
     }
     return $http.post($scope.LmsUrl + 'jsonrpc.js', '{"id":1,"method":"slim.request","params":["' + $scope.player.playerid + '",' + angular.toJson(params) + ']}').then(function (r) {
-      if ($scope.logging === true) console.log('lmsreturn: ' + r.data)
+      if ($scope.logging === true) console.log('lmsreturn: ' + angular.toJson(r.data))
       if (menuparams) {
         if (menuparams[0]) {
           if (r.data.result.base) {
@@ -297,45 +297,35 @@ LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $ti
     $scope.lmsPost(params, [true, false, '$index', item])
   }
 
+  $scope.playlistCover = function (item, res) {
+    if (typeof item === 'undefined') {
+      return $scope.LmsUrl + 'music/0/cover_' + res + 'x' + res + '_p.png'
+    } else if (item.artwork_url) {
+      if (item.artwork_url.startsWith('http')) {
+        return item.artwork_url
+      } else {
+        return $scope.LmsUrl + item.artwork_url.replace(/^\//, '').replace(/(\.[\w\d_-]+)$/i, '_' + res + 'x' + res + '_p$1')
+      }
+    } else if (item.coverid) {
+      return $scope.LmsUrl + 'music/' + item.coverid + '/cover_' + res + 'x' + res + '_p'
+    } else {
+      return $scope.LmsUrl + 'music/0/cover_' + res + 'x' + res + '_p.png'
+    }
+  }
+
   $scope.iconUrl = function (item, res) {
-    if ($scope.logging === true) console.log('iconUrl: ' + angular.toJson(item))
     if (typeof item === 'undefined') {
       if ($scope.logging === true) console.log('iconurl undefined')
       return $scope.LmsUrl + 'music/0/cover_' + res + 'x' + res + '_p.png'
-    } else if (item.icon) {
-      if (item.icon.startsWith('http')) {
-        if ($scope.logging === true) console.log('iconurl icon start with http')
-        return item.icon
-      } else {
-        if ($scope.logging === true) console.log('iconurl icon')
-        var iconrep = item.icon.replace(/(\.[\w\d_-]+)$/i, '_' + res + 'x' + res + '_p$1')
-        if (item.icon === iconrep) {
-          iconrep = item.icon + '_' + res + 'x' + res + '_p'
-        }
-        return $scope.LmsUrl + iconrep
-      }
     } else if (item.presetParams && item.presetParams.icon) {
-      if ($scope.logging === true) console.log('iconurl presetParams.icon')
-      return $scope.LmsUrl + item.presetParams.icon.replace(/^\//, '').replace(/(\.[\w\d_-]+)$/i, '_' + res + 'x' + res + '_p$1')
-    } else if (item.commonParams && item.commonParams.artist_id) {
-      if ($scope.logging === true) console.log('iconurl commonParams.artist_id')
-      return
-    } else if (item.commonParams && item.commonParams.track_id) {
-      if ($scope.logging === true) console.log('iconurl commonParams.track_id')
-      return $scope.LmsUrl + 'music/' + item.commonParams.track_id + '/cover_' + res + 'x' + res + '_p'
-    } else if (item.artwork_url) {
-      if (item.artwork_url.startsWith('http')) {
-        if ($scope.logging === true) console.log('iconurl artwork_url start with http')
-        return item.artwork_url
+      if (item.presetParams.icon.startsWith('http')) {
+        return item.presetParams.icon
       } else {
-        if ($scope.logging === true) console.log('iconurl artwork_url')
-        return $scope.LmsUrl + item.artwork_url.replace(/^\//, '').replace(/(\.[\w\d_-]+)$/i, '_' + res + 'x' + res + '_p$1')
+        return $scope.LmsUrl + item.presetParams.icon.replace(/^\//, '').replace(/(\.[\w\d_-]+)$/i, '_' + res + 'x' + res + '_p$1')
       }
-    } else if (item.id) {
-      if ($scope.logging === true) console.log('iconurl id')
-      return $scope.LmsUrl + 'music/' + item.id + '/cover_' + res + 'x' + res + '_p'
+    } else if (item.commonParams && item.commonParams.track_id) {
+      return $scope.LmsUrl + 'music/' + item.commonParams.track_id + '/cover_' + res + 'x' + res + '_p'
     } else {
-      if ($scope.logging === true) console.log('iconurl fallback cover')
       return $scope.LmsUrl + 'music/0/cover_' + res + 'x' + res + '_p.png'
     }
   }
