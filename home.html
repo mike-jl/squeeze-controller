@@ -47,7 +47,7 @@
       <input style="margin-bottom:10px;margin-top:0px;" class="clickable" type="range" min="0" max="100" ng-model="volume" ng-mousedown="VolChange=1;" ng-mouseup="lmsPost(['mixer','volume',volume]);VolChange=0;">
     </div>
   </div>
-  <div class="content-header-row">
+  <!-- <div class="content-header-row">
     <div class="content-header-col-50" >
       <ol class="breadcrumb" style="margin-bottom:0; padding:6px 10px; font-size:15px;background-color:transparent;font-weight:bold;">
         <li ng-click="menuLoading || getmenu()" ng-class="breadCrumbs.length < 1 && 'active'">
@@ -68,9 +68,20 @@
         </div>
       </div>
     </div>
-  </div>
+  </div> -->
   <div class="content-row">
-    <div class="content-header-col-50 scroll">
+    <div class="col-50">
+      <div class="content-header">
+        <ol class="breadcrumb" style="margin-bottom:0; padding:0px 5px 5px 5px; font-size:15px;background-color:transparent;font-weight:bold;">
+          <li ng-click="menuLoading || getmenu()" ng-class="breadCrumbs.length < 1 && 'active'">
+            <if ng-if="breadCrumbs.length < 1">Home</if><a ng-if="breadCrumbs.length >= 1" href="#">Home</a>
+          </li>
+          <li ng-repeat="breadCrumb in breadCrumbs track by $index" ng-click="menuLoading || breadCrumbfunc($index)" ng-class="$last === true && 'active'">
+            <if ng-if="$last === true">{{breadCrumb[0].text | noNewLine}}</if><a ng-if="$last === false" href="#">{{breadCrumb[0].text | noNewLine}}</a>
+          </li>
+        </ol>
+      </div>
+      <div class="content-content scroll">
       <ul class="list-group" dnd-list="menu.item_loop" dnd-allowed-types="[null]">
         <li ng-if="filteredMenu.length > maxitems || menuFilter" class="list-group-item">
           <div class="form-group search-form">
@@ -127,7 +138,19 @@
         previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"></ul>
       </div>
     </div>
-    <div class="content-header-col-50 scroll">
+  </div>
+  <div class="col-50">
+    <div class="content-header">
+      <div style="font-size:15px;padding:0px 5px 5px 5px;color:#777;font-weight:bold;position:relative;">
+        Playlist:
+        <div class="pull-right" style="position:absolute;bottom:5px;right:5px;">
+          <button class="btn btn-sm btn-danger" ng-click="lmsPost(['playlist','clear']);">
+            <span class="glyphicon glyphicon-trash gi-v-centered"></span>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="content-content scroll">
       <ul class="list-group" dnd-list="playlist" dnd-drop="dndPlaylistMove(type, item, index)">
         <li ng-class="title['playlist index'] == data.playlist_cur_index ? 'active' : ''" class="list-group-item clickable playlist"
             ng-if="data.playlist_tracks !== 0"
@@ -150,5 +173,6 @@
         </li>
       </ul>
     </div>
+  </div>
   </div>
 </div>

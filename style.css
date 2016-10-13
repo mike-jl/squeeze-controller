@@ -30,14 +30,26 @@ body {
 }
 .content-header-col-50 {
   overflow-y: auto;
-  flex :0 0 50%;
+  flex: 0 0 50%;
   padding: 0px 15px;
 }
 .col-50 {
-  overflow-y: auto;
-  flex :0 0 50%;
-  padding: 15px;
+  width: 50%;
+  padding: 0px 10px;
+  flex: 0 0 50%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
+.content-header {
+  flex: 1;
+}
+.content-content {
+  overflow-y: auto;
+  height: 100%;
+  flex: 1 1 100%;
+}
+
 .col-25 {
   overflow-y: auto;
   flex :0 0 25%;
