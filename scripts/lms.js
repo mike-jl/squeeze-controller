@@ -236,7 +236,19 @@ LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $ti
       $scope.lmsPost(params[0], [params[1], false, '$index', item])
     }
   }
+
+  $scope.actionmenu = function (item, action) {
+    if ($scope.logging === true) console.log('actionmenu: Action: ' + action)
+    if ($scope.baseactions === 0) {
+      console.error('something went horribly wrong..')
+      return
+    }
+    var params = $scope.submenu(item, action, 0, true)
+    $scope.lmsPost(params[0], [false])
+  }
+
   $scope.submenu = function (menuitem, action, context, nomenuChange) {
+    if ($scope.logging === true) console.log('submenu: ' + angular.toJson($scope.baseactions[action]))
     var params = []
     var menuChange = true
     if ($scope.baseactions[action].nextWindow === 'parentNoRefresh' ||

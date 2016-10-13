@@ -79,19 +79,23 @@
         </li>
         <li ng-if="(menu | typeof) != 'undefined'"
             class="list-group-item"
-            ng-repeat="menuitem in filteredMenu = ( menu.item_loop | objectFilter:'node':nodefilter:filterisEnable | objectFilter:'text':menuFilter:true ) | orderBy:orderby | startFrom:startFrom | limitTo:maxitems"
+            ng-repeat="menuitem in filteredMenu = ( menu.item_loop | objectFilter:'node':nodefilter:filterisEnable | objectFilter:'text':menuFilter:true ) | orderBy:orderby | startFrom:startFrom | limitTo:maxitems track by $index+menuitem.text"
             dnd-draggable="menuitem"
             dnd-effect-allowed="copy"
             dnd-disable-if="!menuitem.params.isContextMenu && menuitem.type !== 'playlist' && menuitem.type !== 'audio'"
             dnd-type="'menu'">
           <div class="btn-group vert-align pull-right" uib-dropdown on-toggle="open ? submenu(menuitem,'more',1) : ddClose()"
-               ng-if="menuitem.params.isContextMenu || menuitem.type == 'playlist' || menuitem.type == 'audio'" class="pull-right text-nowrap">
-            <button ng-disabled="menuLoading" class="btn btn-xs" type="button" uib-dropdown-toggle id="{{menuitem.commonParams.album_id}}">
-              <span class="glyphicon glyphicon-option-horizontal gi-v-centered"></span>
+               ng-if="menuitem.params.isContextMenu || menuitem.type == 'playlist' || menuitem.type == 'audio'" ng-disabled="menuLoading">
+            <button class="btn btn-xs btn-default" type="button" style="border-radius: 3px 0px 0px 3px;" ng-click="actionmenu(menuitem, 'add')">
+              <span class="glyphicon glyphicon glyphicon-plus"></span>
+            </button>
+            <button type="button" class="btn btn-xs btn-default" uib-dropdown-toggle id="{{$index}}" style="border-radius: 0px 3px 3px 0px;">
+              <span class="caret"></span>
+              <span class="sr-only">Toggle Dropdown</span>
             </button>
             <ul class="dropdown-menu dropdown-menu-right" uib-dropdown-menu role="menu" aria-labelledby="{{menuitem.commonParams.album_id}}">
               <li ng-repeat="contextItem in contextMenu.item_loop" ng-class="contextItem.action=='none' ? 'disabled' : ''" ng-click="menufunc(contextItem)" role="menuitem">
-                <a href="#/">{{contextItem.text}}</a>
+                <a href="#/" style="white-space:normal;">{{contextItem.text}}</a>
               </li>
             </ul>
           </div>
@@ -112,8 +116,8 @@
                  ng-if="(menuitem.type == 'playlist' || menuitem.type == 'audio') && menuArtwork == true && ! menuitem.commonParams.artist_id"
                  http-src="{{iconUrl(menuitem, 40)}}"></img>
             <div class="pre-whitespace first-line-bold dot-overflow">{{menuitem.text}}</div>
+            <div style="clear: both;"></div>
           </div>
-          <div style="clear: both;"></div>
         </li>
       </ul>
       <div class="text-center">
@@ -127,7 +131,7 @@
       <ul class="list-group" dnd-list="playlist" dnd-drop="dndPlaylistMove(type, item, index)">
         <li ng-class="title['playlist index'] == data.playlist_cur_index ? 'active' : ''" class="list-group-item clickable playlist"
             ng-if="data.playlist_tracks !== 0"
-            ng-repeat="title in playlist track by title.id"
+            ng-repeat="title in playlist track by ''+$index+title.id"
             dnd-draggable="title"
             dnd-effect-allowed="move"
             dnd-type="'playlist'">
