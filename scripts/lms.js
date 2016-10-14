@@ -312,34 +312,44 @@ LmsApi.controller('LmsApiCtrl', function ($filter, $location, $scope, $http, $ti
 
   $scope.playlistCover = function (item, res) {
     if (typeof item === 'undefined') {
-      return $scope.LmsUrl + 'music/0/cover_' + res + 'x' + res + '_p.png'
+      return $scope.LmsUrl + 'music/0/cover_' + res + 'x' + res + '_p'
     } else if (item.artwork_url) {
       if (item.artwork_url.startsWith('http')) {
         return item.artwork_url
       } else {
-        return $scope.LmsUrl + item.artwork_url.replace(/^\//, '').replace(/(\.[\w\d_-]+)$/i, '_' + res + 'x' + res + '_p$1')
+        var repUrl = $scope.LmsUrl + item.artwork_url.replace(/^\//, '').replace(/(\.[\w\d_-]+)$/i, '_' + res + 'x' + res + '_p$1')
+        if (repUrl === $scope.LmsUrl + item.artwork_url) {
+          return $scope.LmsUrl + item.artwork_url + '_' + res + 'x' + res + '_p'
+        } else {
+          return repUrl
+        }
       }
     } else if (item.coverid) {
       return $scope.LmsUrl + 'music/' + item.coverid + '/cover_' + res + 'x' + res + '_p'
     } else {
-      return $scope.LmsUrl + 'music/0/cover_' + res + 'x' + res + '_p.png'
+      return $scope.LmsUrl + 'music/0/cover_' + res + 'x' + res + '_p'
     }
   }
 
   $scope.iconUrl = function (item, res) {
     if (typeof item === 'undefined') {
       if ($scope.logging === true) console.log('iconurl undefined')
-      return $scope.LmsUrl + 'music/0/cover_' + res + 'x' + res + '_p.png'
+      return $scope.LmsUrl + 'music/0/cover_' + res + 'x' + res + '_p'
     } else if (item.presetParams && item.presetParams.icon) {
       if (item.presetParams.icon.startsWith('http')) {
         return item.presetParams.icon
       } else {
-        return $scope.LmsUrl + item.presetParams.icon.replace(/^\//, '').replace(/(\.[\w\d_-]+)$/i, '_' + res + 'x' + res + '_p$1')
+        var repUrl = $scope.LmsUrl + item.presetParams.icon.replace(/^\//, '').replace(/(\.[\w\d_-]+)$/i, '_' + res + 'x' + res + '_p$1')
+        if (repUrl === $scope.LmsUrl + item.presetParams.icon) {
+          return $scope.LmsUrl + item.presetParams.icon + '_' + res + 'x' + res + '_p'
+        } else {
+          return repUrl
+        }
       }
     } else if (item.commonParams && item.commonParams.track_id) {
       return $scope.LmsUrl + 'music/' + item.commonParams.track_id + '/cover_' + res + 'x' + res + '_p'
     } else {
-      return $scope.LmsUrl + 'music/0/cover_' + res + 'x' + res + '_p.png'
+      return $scope.LmsUrl + 'music/0/cover_' + res + 'x' + res + '_p'
     }
   }
 
