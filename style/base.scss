@@ -1,13 +1,12 @@
 body {
-  /*Change font for whole document*/
+  // set font
   font-family: 'Open Sans', sans-serif;
-  /*Add padding on the bottom for the navbar*/
+  // padding for bottom navbar
   padding-bottom: 35px;
-  /*Disalow to select text*/
+  // diable text select
   -webkit-user-select: none;
 }
 
-/*Start of flexbox*/
 .wrapper, html, body {
   height:100%;
   margin:0;
@@ -16,24 +15,36 @@ body {
   display: flex;
   flex-direction: column;
 }
+.ng-view {
+  height: 100%;
+}
+
+// HEADER:
 .header-row {
   flex:0 0 240px;
   display: flex;
 }
-.content-header-row {
-  flex:none;
-  display: flex;
+%col-header {
+  overflow: hidden;
+  flex-shrink: 0;
+  flex-grow: 0;
+  padding: 15px;
 }
+.col-header-50 {
+  @extend %col-header;
+  flex-basis: 50%;
+}
+.col-header-25 {
+  @extend %col-header;
+  flex-basis: 25%;
+}
+
+// CONTENT
 .content-row {
-  flex:1 0 0;
+  flex: 1 0 0;
   display: flex;
 }
-.content-header-col-50 {
-  overflow-y: auto;
-  flex: 0 0 50%;
-  padding: 0px 15px;
-}
-.col-50 {
+.col-content {
   width: 50%;
   padding: 0px 10px;
   flex: 0 0 50%;
@@ -43,79 +54,101 @@ body {
 }
 .content-header {
   flex: 1;
+  padding: 0px 5px 5px 5px;
+  font-size: 15px;
+  font-weight: bold;
+  background-color:transparent;
 }
+.content-header.breadcrumb {
+  margin-bottom:0;
+}
+.content-header.playlist-header {
+  color: #777;
+  position: relative;
+}
+
 .content-content {
   overflow-y: auto;
   height: 100%;
   flex: 1 1 100%;
 }
 
-.col-25 {
-  overflow-y: auto;
-  flex :0 0 25%;
-  padding: 15px;
-}
-/*End of flexbox*/
-
-/*Styling for the cover img*/
-.img-cover {
+.cover-art {
   padding: 5px;
   height: 180px;
   display: block;
   margin: auto;
 }
 
-/*Custom scrollbar*/
-.scroll::-webkit-scrollbar {
+.btn-xs.left-btn {
+  border-radius: 3px 0px 0px 3px;
+}
+
+.btn-xs.right-btn {
+   border-radius: 0px 3px 3px 0px;
+}
+
+.btn.playlist-header-btn {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+}
+
+.scrollbar::-webkit-scrollbar {
   width: 5px;
 }
-.scroll::-webkit-scrollbar-thumb {
+.scrollbar::-webkit-scrollbar-thumb {
   background: #666;
 }
 
-/*define the width of the dropdown and hide the overflow*/
 .dropdown-menu {
   width: 300px;
-  white-space: nowrap;
-  overflow: hidden;
+  white-space: normal;
 }
 
-/*padding for menu and playlist items*/
 .list-group-item {
   padding: 5px;
 }
 
-/*custom class for text that souldn't wrap to the next line*/
 .nowrap {
   white-space: nowrap;
 }
 
-/*hide the dnd item in the playlist (only in the playlist, in the menu do nothing)*/
+.pre-whitespace{
+  white-space:pre;
+}
+
+.dot-overflow{
+  overflow:hidden !important;
+  text-overflow:ellipsis;
+}
+
+.first-line-bold::first-line {
+  font-weight:bold;
+}
+
 .playlist.dndDraggingSource {
   display: none;
 }
 
-/*placeholde for the dnd item before dropping*/
 .dndPlaceholder {
   display: block;
   background-color: #ddd;
   min-height: 30px;
 }
 
-/*container for the prev,play/pause,next buttons*/
 .control-button-container {
   margin-top: 25px;
   margin-bottom: 25px;
   text-align: center;
 }
-/*prev,play/pause,next buttons*/
+
 .control-button {
   margin: 0px 35px;
   font-size: 2em;
 }
 
-/*Styling for the title line*/
-.title-style {
+.title {
   font-size: 160%;
   text-align: center;
   white-space: nowrap;
@@ -123,8 +156,7 @@ body {
   text-overflow: ellipsis;
 }
 
-/*Styling for the artist and now playing line*/
-.artist-album-style {
+.artist-album {
   font-size: 120%;
   text-align: center;
   white-space: nowrap;
@@ -132,7 +164,20 @@ body {
   text-overflow: ellipsis;
 }
 
-/*button lables with glyphicons (used in the repeat and shuffle buttons)*/
+.volume {
+  margin-bottom: 5px;
+  margin-top: 10px;
+}
+
+.btn-group.psr {
+  margin-top: 10px;
+}
+
+.trackpos {
+  margin-bottom: 8px;
+  margin-top: 0px;
+}
+
 .label-gi-btn {
   position:absolute;
   font-size: 0.7em;
@@ -141,46 +186,37 @@ body {
   transform: translate(-50%, -50%);
 }
 
-/*set the margin to 0 for the serch input in the menu*/
-.search-form {
-  margin:0px;
+.search-form-container {
+   width: 150px;
 }
 
-/*class to change the cursor on clickable items*/
+.menu-icon {
+  float: left;
+  width: 38px;
+  margin-right: 10px;
+}
+
+.playlist-icon {
+  float: left;
+  width: 60px;
+  margin-right: 10px;
+}
+
+.search-form {
+  margin: 0px;
+}
+
 .clickable {
   cursor: pointer;
 }
 
-/*change the height of the navbar*/
 .navbar-nav > li > a {padding-top:5px !important; padding-bottom:5px !important;}
 .navbar {min-height:32px !important}
 
-/*class to use newline from preformatted text*/
-.pre-whitespace{
-  white-space:pre;
-}
-
-/*display ... when text is cut off*/
-.dot-overflow{
-  overflow:hidden !important;
-  text-overflow:ellipsis;
-}
-
-/*class to display the first line bold (used in the menu)*/
-.first-line-bold::first-line {
-  font-weight:bold;
-}
-
-/*class to center the glyphicon in a button*/
-.glyphicon.gi-v-centered {
-  position: inherit;
-  vertical-align: middle;
-}
-
-/*custtom slider start*/
 input[type=range] {
   /*removes default webkit styles*/
   -webkit-appearance: none;
+  cursor: pointer;
 }
 input[type=range]::-webkit-slider-runnable-track {
   width: auto;
@@ -203,4 +239,3 @@ input[type=range]:focus {
 }
 input[type=range]:focus::-webkit-slider-thumb {
 }
-/*custom slider end*/

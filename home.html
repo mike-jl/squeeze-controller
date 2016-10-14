@@ -1,16 +1,16 @@
 <div class="wrapper" ng-controller="LmsApiCtrl">
   <div class="header-row">
-    <div class="col-25">
-      <img class="img-cover" http-src="{{playlistCover(data.playlist_loop[data.playlist_cur_index], 200)}}"></img>
+    <div class="col-header-25">
+      <img class="cover-art" http-src="{{playlistCover(data.playlist_loop[data.playlist_cur_index], 200)}}"></img>
     </div>
-    <div class="col-50">
-      <div class="title-style" title="{{data.playlist_loop[data.playlist_cur_index].title}}" ng-style="{'visibility':(data.playlist_cur_index | typeof)!='undefined'?'visible':'hidden'}">
+    <div class="col-header-50">
+      <div class="title" title="{{data.playlist_loop[data.playlist_cur_index].title}}" ng-style="{'visibility':(data.playlist_cur_index | typeof)!='undefined'?'visible':'hidden'}">
         {{data.playlist_loop[data.playlist_cur_index]['playlist index'] + 1}}. {{data.playlist_loop[data.playlist_cur_index].title}}
       </div>
-      <div class="artist-album-style" title="{{data.playlist_loop[data.playlist_cur_index].artist}}" ng-style="{'visibility':(data.playlist_loop[data.playlist_cur_index].artist | typeof)!='undefined'?'visible':'hidden'}">
+      <div class="artist-album" title="{{data.playlist_loop[data.playlist_cur_index].artist}}" ng-style="{'visibility':(data.playlist_loop[data.playlist_cur_index].artist | typeof)!='undefined'?'visible':'hidden'}">
         {{data.playlist_loop[data.playlist_cur_index].artist ? data.playlist_loop[data.playlist_cur_index].artist : 'space'}}
       </div>
-      <div class="artist-album-style" title="{{data.playlist_loop[data.playlist_cur_index].album}}" ng-style="{'visibility':(data.playlist_loop[data.playlist_cur_index].album | typeof)!='undefined'?'visible':'hidden'}">
+      <div class="artist-album" title="{{data.playlist_loop[data.playlist_cur_index].album}}" ng-style="{'visibility':(data.playlist_loop[data.playlist_cur_index].album | typeof)!='undefined'?'visible':'hidden'}">
         {{data.playlist_loop[data.playlist_cur_index].album}} ({{data.playlist_loop[data.playlist_cur_index].year}})
       </div>
       <div class="control-button-container">
@@ -18,16 +18,16 @@
         <span ng-class="data.mode != 'play' ? 'glyphicon glyphicon-play clickable control-button' : 'glyphicon glyphicon-pause clickable control-button';" ng-click="lmsPost(['pause']);"></span>
         <span class="glyphicon glyphicon-step-forward clickable control-button" ng-click="lmsPost(['button','jump_fwd']);"></span>
       </div>
-      <input style="margin-bottom:10px;margin-top:0px;" class="clickable" type="range" min="0" max="{{data.duration ? data.duration : 0}}" ng-model="trackpos" ng-mousedown="TrackPosChange=1;" ng-mouseup="lmsPost(['time',trackpos]);TrackPosChange=0;">
-      <p style="text-align:left;">
+      <input class="trackpos" type="range" min="0" max="{{data.duration ? data.duration : 0}}" ng-model="trackpos" ng-mousedown="TrackPosChange=1;" ng-mouseup="lmsPost(['time',trackpos]);TrackPosChange=0;">
+      <div>
         {{trackpos | num | secondsToDateTime | date:'HH:mm:ss'}}
-        <span ng-if="data.duration" style="float:right;">{{data.duration | num | secondsToDateTime | date:'HH:mm:ss'}}</span>
-        <span ng-if="!data.duration" style="float:right;">{{0 | num | secondsToDateTime | date:'HH:mm:ss'}}</span>
-      </p>
+        <if ng-if="data.duration" class="pull-right">{{data.duration | num | secondsToDateTime | date:'HH:mm:ss'}}</if>
+        <if ng-if="!data.duration" class="pull-right">{{0 | num | secondsToDateTime | date:'HH:mm:ss'}}</if>
+      </div>
     </div>
-    <div class="col-25">
-      <select class="form-control clickable" ng-model="player" ng-options="player.name for player in players.players_loop"></select>
-      <div class="btn-group btn-group-justified" role="group" style="margin-top:10px;">
+    <div class="col-header-25">
+      <select class="form-control" ng-model="player" ng-options="player.name for player in players.players_loop"></select>
+      <div class="btn-group psr btn-group-justified">
         <a href="#/" type="button" ng-class="data.power == 1 ? 'btn btn-info' : 'btn btn-default'" ng-click="lmsPost(['power'])"
            ng-attr-title="{{ data.power == 0 ? 'Power Off' : 'Power On' }}">
           <span class="glyphicon glyphicon-off"></span>
@@ -43,45 +43,21 @@
           <span ng-if="data['playlist shuffle'] == 2" class="glyphicon glyphicon-cd label-gi-btn"></span>
         </a>
       </div>
-      <p style="margin-bottom:5px;margin-top:10px;">Volume: {{volume}}</p>
-      <input style="margin-bottom:10px;margin-top:0px;" class="clickable" type="range" min="0" max="100" ng-model="volume" ng-mousedown="VolChange=1;" ng-mouseup="lmsPost(['mixer','volume',volume]);VolChange=0;">
+      <div class="volume">Volume: {{volume}}</div>
+      <input class="volume" type="range" min="0" max="100" ng-model="volume" ng-mousedown="VolChange=1;" ng-mouseup="lmsPost(['mixer','volume',volume]);VolChange=0;">
     </div>
   </div>
-  <!-- <div class="content-header-row">
-    <div class="content-header-col-50" >
-      <ol class="breadcrumb" style="margin-bottom:0; padding:6px 10px; font-size:15px;background-color:transparent;font-weight:bold;">
-        <li ng-click="menuLoading || getmenu()" ng-class="breadCrumbs.length < 1 && 'active'">
-          <if ng-if="breadCrumbs.length < 1">Home</if><a ng-if="breadCrumbs.length >= 1" href="#">Home</a>
-        </li>
-        <li ng-repeat="breadCrumb in breadCrumbs track by $index" ng-click="menuLoading || breadCrumbfunc($index)" ng-class="$last === true && 'active'">
-          <if ng-if="$last === true">{{breadCrumb[0].text | noNewLine}}</if><a ng-if="$last === false" href="#">{{breadCrumb[0].text | noNewLine}}</a>
-        </li>
-      </ol>
-    </div>
-    <div class="content-header-col-50">
-      <div style="border-radius:4px;font-size:15px;padding:6px 10px;color:#777;font-weight:bold;">
-        Playlist:
-        <div class="pull-right">
-          <button class="btn btn-sm btn-danger" ng-click="lmsPost(['playlist','clear']);">
-            <span class="glyphicon glyphicon-trash gi-v-centered"></span>
-          </button>
-        </div>
-      </div>
-    </div>
-  </div> -->
   <div class="content-row">
-    <div class="col-50">
-      <div class="content-header">
-        <ol class="breadcrumb" style="margin-bottom:0; padding:0px 5px 5px 5px; font-size:15px;background-color:transparent;font-weight:bold;">
+    <div class="col-content">
+      <div class="content-header breadcrumb">
           <li ng-click="menuLoading || getmenu()" ng-class="breadCrumbs.length < 1 && 'active'">
             <if ng-if="breadCrumbs.length < 1">Home</if><a ng-if="breadCrumbs.length >= 1" href="#">Home</a>
           </li>
           <li ng-repeat="breadCrumb in breadCrumbs track by $index" ng-click="menuLoading || breadCrumbfunc($index)" ng-class="$last === true && 'active'">
             <if ng-if="$last === true">{{breadCrumb[0].text | noNewLine}}</if><a ng-if="$last === false" href="#">{{breadCrumb[0].text | noNewLine}}</a>
           </li>
-        </ol>
       </div>
-      <div class="content-content scroll">
+      <div class="content-content scrollbar">
       <ul class="list-group" dnd-list="menu.item_loop" dnd-allowed-types="[null]">
         <li ng-if="filteredMenu.length > maxitems || menuFilter" class="list-group-item">
           <div class="form-group search-form">
@@ -97,20 +73,20 @@
             dnd-type="'menu'">
           <div class="btn-group vert-align pull-right" uib-dropdown on-toggle="open ? submenu(menuitem,'more',1) : ddClose()"
                ng-if="menuitem.params.isContextMenu || menuitem.type == 'playlist' || menuitem.type == 'audio'" ng-disabled="menuLoading">
-            <button class="btn btn-xs btn-default" type="button" style="border-radius: 3px 0px 0px 3px;" ng-click="actionmenu(menuitem, 'add')">
+            <button class="btn btn-xs left-btn btn-default" type="button" ng-click="actionmenu(menuitem, 'add')">
               <span class="glyphicon glyphicon glyphicon-plus"></span>
             </button>
-            <button type="button" class="btn btn-xs btn-default" uib-dropdown-toggle id="{{$index}}" style="border-radius: 0px 3px 3px 0px;">
+            <button type="button" class="btn btn-xs right-btn btn-default" uib-dropdown-toggle id="{{$index}}">
               <span class="caret"></span>
               <span class="sr-only">Toggle Dropdown</span>
             </button>
             <ul class="dropdown-menu dropdown-menu-right" uib-dropdown-menu role="menu" aria-labelledby="{{menuitem.commonParams.album_id}}">
               <li ng-repeat="contextItem in contextMenu.item_loop" ng-class="contextItem.action=='none' ? 'disabled' : ''" ng-click="menufunc(contextItem)" role="menuitem">
-                <a href="#/" style="white-space:normal;">{{contextItem.text}}</a>
+                <a href="#/">{{contextItem.text}}</a>
               </li>
             </ul>
           </div>
-          <div ng-if="menuitem.type==='search' || menuitem.id==='globalSearch'" class="pull-right" style="width:150px">
+          <div ng-if="menuitem.type==='search' || menuitem.id==='globalSearch'" class="pull-right search-form-container">
             <form class="search-form" ng-submit="search(menuitem,searchInput)">
               <div class="input-group input-group-sm">
                 <input ng-disabled="menuLoading" type="text" class="form-control" ng-model="searchInput" placeholder="Search..."></input>
@@ -122,12 +98,10 @@
               </div>
             </form>
           </div>
-          <div class="clickable" ng-attr-title="{{ bubbletips ? menuitem.text : undefined }}" ng-click="menuLoading || menufunc(menuitem)">
-            <img style="float:left;width:38px;margin-right:10px;"
-                 ng-if="(menuitem.type == 'playlist' || menuitem.type == 'audio') && menuArtwork == true && ! menuitem.commonParams.artist_id"
-                 http-src="{{iconUrl(menuitem, 40)}}"></img>
+          <div class="clickable clearfix" ng-attr-title="{{ bubbletips ? menuitem.text : undefined }}" ng-click="menuLoading || menufunc(menuitem)">
+            <img ng-if="(menuitem.type == 'playlist' || menuitem.type == 'audio') && menuArtwork == true && ! menuitem.commonParams.artist_id"
+                 http-src="{{iconUrl(menuitem, 40)}}" class="menu-icon"></img>
             <div class="pre-whitespace first-line-bold dot-overflow">{{menuitem.text}}</div>
-            <div style="clear: both;"></div>
           </div>
         </li>
       </ul>
@@ -139,18 +113,14 @@
       </div>
     </div>
   </div>
-  <div class="col-50">
-    <div class="content-header">
-      <div style="font-size:15px;padding:0px 5px 5px 5px;color:#777;font-weight:bold;position:relative;">
+  <div class="col-content">
+    <div class="content-header playlist-header">
         Playlist:
-        <div class="pull-right" style="position:absolute;bottom:5px;right:5px;">
-          <button class="btn btn-sm btn-danger" ng-click="lmsPost(['playlist','clear']);">
-            <span class="glyphicon glyphicon-trash gi-v-centered"></span>
-          </button>
-        </div>
-      </div>
+        <button class="btn btn-sm btn-danger playlist-header-btn" ng-click="lmsPost(['playlist','clear']);">
+          <span class="glyphicon glyphicon-trash"></span>
+        </button>
     </div>
-    <div class="content-content scroll">
+    <div class="content-content scrollbar">
       <ul class="list-group" dnd-list="playlist" dnd-drop="dndPlaylistMove(type, item, index)">
         <li ng-class="title['playlist index'] == data.playlist_cur_index ? 'active' : ''" class="list-group-item clickable playlist"
             ng-if="data.playlist_tracks !== 0"
@@ -158,11 +128,11 @@
             dnd-draggable="title"
             dnd-effect-allowed="move"
             dnd-type="'playlist'">
-          <button style="float:right;" class="btn btn-sm btn-warning" ng-click="lmsPost(['playlist','delete',title['playlist index']]);">
-            <span class="glyphicon glyphicon-trash gi-v-centered"></span>
+          <button class="btn btn-sm btn-warning pull-right" ng-click="lmsPost(['playlist','delete',title['playlist index']]);">
+            <span class="glyphicon glyphicon-trash"></span>
           </button>
           <div ng-click="lmsPost(['playlist','index',title['playlist index']]);" class="dot-overflow nowrap">
-            <img ng-if="playlistArtwork == true" http-src="{{playlistCover(title, 70)}}" style="float:left;width:60px;margin-right:10px;"></img>
+            <img class="playlist-icon" ng-if="playlistArtwork == true" http-src="{{playlistCover(title, 70)}}"></img>
             <b title="{{title.title}}">{{title.title}}</b><br>
             {{title.artist}}<br>
             {{title.album}}
