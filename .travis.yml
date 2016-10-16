@@ -17,6 +17,7 @@ before_deploy:
   - tar -czvf squeeze-controller-darwin-x64.tar.gz "Squeeze Controller-darwin-x64"
   - tar -czvf squeeze-controller-linux-x64.tar.gz "Squeeze Controller-linux-x64"
   - tar -czvf squeeze-controller-linux-ia32.tar.gz "Squeeze Controller-linux-ia32"
+  - tar -czvf squeeze-controller-linux-armv7l.tar.gz "Squeeze Controller-linux-armv7l"
   - zip -r squeeze-controller-win32-x64.zip "Squeeze Controller-win32-x64"
   - zip -r squeeze-controller-win32-ia32.zip "Squeeze Controller-win32-ia32"
 deploy:
@@ -29,6 +30,7 @@ deploy:
     - "squeeze-controller-linux-ia32.tar.gz"
     - "squeeze-controller-win32-x64.zip"
     - "squeeze-controller-win32-ia32.zip"
+    - "squeeze-controller-linux-armv7l.tar.gz"
   skip_cleanup: true
   on:
     tags: true
