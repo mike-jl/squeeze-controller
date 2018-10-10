@@ -23,3 +23,19 @@ A stylish new Controller app for the Logitech Media Server.
 ![home](http://i.imgur.com/jK9F1Fq.png)
 ![settings](http://i.imgur.com/KPeGhrP.png)
 ![filter](http://i.imgur.com/NPCEaWw.png)
+
+### Build
+
+Fetch all dependencies with
+
+```bash
+$ npm install
+```
+
+and build packages with
+
+```
+$ npm run dist
+```
+
+You can find the packages in the `dist/` directory afterwards.
